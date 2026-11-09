@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#031622">
+<title>EXPLORANDUM · El acuario del mundo | Océano inmersivo 3D</title>
+<style>
+:root{color-scheme:dark;--aqua:#aff4e6;--ice:#e8f9fa;--navy:#041826}
+*{box-sizing:border-box}body{margin:0;background:#020c15;color:var(--ice);font:15px/1.45 system-ui,-apple-system,sans-serif}button,input{font:inherit}button{cursor:pointer}a{color:#a1eef2}button:focus-visible,a:focus-visible{outline:2px solid #e5ffbd;outline-offset:3px}
+header{height:55px;background:#051924;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:0 21px;position:relative;z-index:5}.brand{font:bold 22px Georgia,serif;letter-spacing:.14em}nav{display:flex;align-items:center;gap:18px;flex-wrap:wrap}nav a{font-size:12px;text-decoration:none}
+#world{height:calc(100dvh - 55px);min-height:540px;position:relative;overflow:hidden;isolation:isolate;background:radial-gradient(ellipse at 45% 0,#1a7594,#031829 85%);touch-action:none}
+#sea{display:block;width:100%;height:100%;touch-action:none;cursor:grab}#sea:active{cursor:grabbing}
+#window{pointer-events:none;position:absolute;inset:0;z-index:3;border:clamp(16px,3vw,47px) solid #132b3bb8;border-radius:clamp(38px,8vw,110px) clamp(38px,8vw,110px) 15px 15px / 48px 48px 15px 15px;box-shadow:inset 0 0 36px #010c18d8,0 0 0 2px #749aa580,inset 0 0 7px #e7ffff45}
+#window:before{content:"";position:absolute;inset:-20px;border-radius:inherit;border:14px solid #06182680;box-shadow:inset 0 0 8px #bbf7f933}
+#window:after{content:"";position:absolute;left:49.65%;top:-37px;bottom:-10px;width:clamp(7px,1.4vw,17px);background:linear-gradient(90deg,#081723,#61828c7e,#061825);opacity:.42}
+#glass{pointer-events:none;position:absolute;inset:0;z-index:3;background:linear-gradient(115deg,transparent 8%,#d7ffff08 12%,transparent 27%,transparent 75%,#c1ffff07 82%,transparent 95%);mix-blend-mode:screen}
+#hud{position:absolute;z-index:5;top:17px;left:clamp(16px,4vw,48px);right:200px;display:flex;gap:6px;flex-wrap:wrap;pointer-events:none}#hud span{background:#041c2bd6;border:1px solid #83b8c5;border-radius:8px;padding:7px 11px;font:700 11px system-ui;letter-spacing:.07em;box-shadow:0 3px 14px #0005}
+#miniWrap{position:absolute;right:clamp(10px,3vw,36px);top:17px;z-index:7;background:#041b2ade;border:1px solid #88b6c2;border-radius:13px;width:160px;height:170px;overflow:hidden;box-shadow:0 4px 24px #0009}#miniMap{width:100%;height:100%;display:block}
+#mission{position:absolute;z-index:5;top:28%;left:50%;transform:translate(-50%,-50%);pointer-events:none;text-align:center;text-shadow:0 3px 17px #00131f;width:min(80vw,600px);opacity:0;transition:opacity .5s}
+#mission.show{opacity:1}#mission strong{font:30px Georgia,serif;display:block}#mission small{letter-spacing:.1em;font-size:12px;color:#ccf6eb}
+#reticle{position:absolute;z-index:4;left:50%;top:45%;width:36px;height:36px;border:1px solid #b8fae5a9;border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;box-shadow:0 0 0 7px #adf7ed13}
+#reticle:after{content:"+";position:absolute;color:#d8fff1a8;left:11px;top:2px;font-size:22px}
+#console{position:absolute;z-index:4;bottom:0;left:0;right:0;height:145px;pointer-events:none;background:linear-gradient(transparent,#03141cba 26%,#020d17f5 75%);border-top:1px solid #7aa5ad3b}
+#controls{position:absolute;z-index:8;bottom:0;left:0;right:0;padding:10px 12px max(13px,env(safe-area-inset-bottom));background:linear-gradient(transparent,#031923ef 19%,#03121af5);display:flex;flex-direction:column;gap:7px}
+#message{font-size:13px;color:#d6f8f2;text-align:center;min-height:19px;text-shadow:0 2px 5px #000}
+.buttons{display:flex;justify-content:center;flex-wrap:wrap;gap:7px}.buttons button,.controlsbtn{padding:9px 12px;color:#ecffff;background:#124557e8;border:1px solid #8dcbd5;border-radius:9px;min-height:40px;font-weight:700;touch-action:none}.buttons button:hover,.controlsbtn:hover{background:#1b6975}.buttons button.primary{background:#b4f6e4;color:#063441;border-color:#e6fff2}.buttons button.is-on{background:#aaf2e1;color:#063846}
+#sonarCircle{position:absolute;left:50%;top:44%;width:8px;height:8px;transform:translate(-50%,-50%);border-radius:50%;border:2px solid #d9ffe8;pointer-events:none;z-index:4;opacity:0}#sonarCircle.ping{animation:pulse 1.5s ease-out forwards}@keyframes pulse{0%{width:8px;height:8px;opacity:1}100%{width:70vmin;height:70vmin;opacity:0}}
+#prompt{position:absolute;z-index:7;left:50%;bottom:147px;transform:translateX(-50%);background:#051d2be9;border:1px solid #aeefe1;border-radius:12px;display:none;padding:11px 15px;max-width:90%;width:max-content;text-align:center;box-shadow:0 8px 35px #0007}
+#prompt.on{display:block}#prompt button{color:#073843;background:#b6f5e8;border:0;border-radius:7px;padding:6px 12px;margin-left:9px;font-weight:800}
+#loader{position:absolute;inset:0;z-index:12;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:13px;background:linear-gradient(120deg,#082f40ee,#031522f5),url("Imagen%20de%20ChatGPT%209%20nov%202026%2C%2000_28_25.png") center/cover}
+#loader h1{font:clamp(36px,6vw,68px)/1.07 Georgia,serif;margin:0;max-width:700px}
+#loader p{font-size:17px;color:#d6ecef;margin:0;max-width:680px;padding:0 24px}
+#loadingBar{height:5px;background:#1a5062;width:min(360px,80%);border-radius:12px;overflow:hidden}#loadingBar i{display:block;height:100%;width:10%;background:linear-gradient(90deg,#4a9ac1,#b1ffdf);transition:width .25s}
+#loader button{border-radius:11px;background:#b6f4e6;color:#063545;border:0;padding:12px 25px;font-weight:800;font-size:16px}
+#loader .fallback{color:#b6dbdd;font-size:13px}
+#help,#fieldbook{position:absolute;z-index:14;background:#031a29f4;border:1px solid #75a5b4;border-radius:16px;box-shadow:0 17px 85px #000d}
+#help{right:20px;bottom:160px;max-width:420px;padding:20px}
+#help[hidden],#fieldbook[hidden],#info[hidden]{display:none}
+#help h2{font:28px Georgia,serif;margin:0 0 10px}#help p{font-size:14px;color:#d9edf1}
+#fieldbook{inset:6% 4% 147px;overflow:auto;padding:23px}#fieldbook h2{font:32px Georgia,serif;margin:0 0 5px}
+#fieldList{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:16px 0}
+.fieldCard{background:#0b3546;border:1px solid #6395a0;border-radius:11px;color:#fff;padding:9px;text-align:left;min-height:190px}
+.fieldCard img{height:130px;width:100%;object-fit:contain;display:block;background:#031825;border-radius:7px}.fieldCard strong{display:block;margin:7px 0;font-size:15px}.fieldCard small{display:block;color:#aedbd6}
+.close{border:0;border-radius:8px;background:#b5f4e5;color:#07313e;padding:11px 17px;font-weight:800}
+#info{position:absolute;z-index:16;left:50%;top:50%;transform:translate(-50%,-50%);width:min(900px,93vw);max-height:86%;overflow:auto;background:#031725f9;border:1px solid #afe8e2;border-radius:18px;box-shadow:0 20px 100px #000e}
+#infoPhoto{height:clamp(230px,38vh,420px);background:radial-gradient(ellipse,#18485a,#02131e);position:relative}
+#infoPhoto img{display:block;height:100%;width:100%;object-fit:contain}
+#infoPhoto .photoPlace{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,#021825e8);padding:24px 20px 12px;font-size:13px;color:#dbf1f0}
+#infoBody{padding:22px 26px 26px}#infoBody h2{font:clamp(29px,4vw,40px) Georgia,serif;margin:3px 0}
+#infoBody p{font-size:16px;color:#d2eaf0}
+#infoBody em{color:#b0dedf;display:block}
+#infoBody .label{font-size:11px;letter-spacing:.13em;color:#a1f5dc;font-weight:900}
+#infoBody blockquote{border-left:3px solid #99e9e0;background:#103747;border-radius:7px;padding:12px 15px;margin:18px 0}
+#infoBody blockquote strong{display:block;color:#a8f3e2;margin-bottom:4px}
+#infoBody .meta{color:#a3cbd0;font-size:12px;line-height:1.5}
+#infoBody video{width:100%;max-height:250px;background:#00101c;border-radius:9px}
+#infoBody .filmblock[hidden]{display:none}
+#infoBody .filmblock{border-top:1px solid #416e7e;margin:16px 0;padding-top:12px}
+#infoBody .meta a{color:#abeef0}
+#credits{padding:15px 22px;background:#061924;color:#a5c1ca;font-size:12px}
+#fallback{position:absolute;inset:0;z-index:25;background:#041724f0;padding:25px;display:none;align-items:center;justify-content:center;text-align:center}#fallback.on{display:flex}
+#fallback div{max-width:500px}#fallback a{display:block;margin:12px}
+@media(max-width:780px){header{height:50px;padding:7px 13px}.brand{font-size:17px}nav a{font-size:11px}#world{height:calc(100dvh - 50px);min-height:600px}#hud{right:117px;top:9px;left:10px;gap:4px}#hud span{font-size:10px;padding:5px}#miniWrap{top:8px;right:9px;width:103px;height:113px}#window{border-width:15px}#controls{padding:7px 6px max(8px,env(safe-area-inset-bottom))}.buttons button{font-size:12px;min-height:38px;padding:7px 9px}#prompt{bottom:180px}#help{bottom:190px;left:10px;right:10px;max-width:none}#fieldbook{inset:5px 5px 180px;padding:13px}#fieldList{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.fieldCard img{height:85px}.fieldCard{min-height:145px}#infoBody{padding:15px}}
+@media(max-height:600px){#controls{padding-top:4px;padding-bottom:5px}.buttons button{padding:5px 9px;min-height:32px}#message{font-size:11px}}
+@media(prefers-reduced-motion:reduce){#sonarCircle.ping{animation:none}}
+</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
+</head><body>
+<header><div class="brand">EXPLORANDUM</div><nav><a href="capas.html">Las tres capas</a><a href="submarino-v2.html">Versión V2</a></nav></header>
+<main id="world">
+<canvas id="sea" aria-label="Mundo submarino tridimensional continuo y navegable"></canvas>
+<div id="glass"></div><div id="window"></div><div id="console"></div>
+<div id="reticle"></div><div id="sonarCircle"></div>
+<div id="hud"><span id="depth">PROFUNDIDAD · 12 m</span><span id="pressure">PRESIÓN · 2,2 atm</span><span id="heading">RUMBO · 000°</span><span id="speed">VELOCIDAD · 0</span><span id="habitat">HÁBITAT · ARRECIFE</span><span id="discovered">ENCUENTROS · 0 / 10</span></div>
+<div id="miniWrap"><canvas id="miniMap" width="160" height="170" aria-label="Mapa esquemático de encuentros"></canvas></div>
+<div id="mission"><strong id="missionTitle">Bienvenidos al mar de Cortés</strong><small id="missionDesc">Explora, observa y descubre</small></div>
+<div id="prompt"><span id="nearText">Hay un encuentro cerca</span><button id="openNear">Observar</button></div>
+<div id="controls"><div id="message">W/A/S/D para desplazarte · Ratón pulsado para mirar · Q/E subir/bajar</div>
+<div class="buttons">
+<button class="primary" data-hold="forward">▲ Avanzar</button><button data-hold="back">▼ Atrás</button><button data-hold="left">◀ Izquierda</button><button data-hold="right">Derecha ▶</button>
+<button data-hold="up">↑ Ascender</button><button data-hold="down">↓ Descender</button>
+<button id="cruise">⏵ Crucero</button><button id="sonar">◎ Sonar</button><button id="lights">☀ Focos</button>
+<button id="book">◉ Especies</button><button id="inspect" disabled>Investigar</button><button id="full">⛶ Pantalla completa</button><button id="helpBtn">?</button>
+</div></div>
+<div id="help" hidden><h2>Pilotar el submarino</h2><p>W/S avanzan y retroceden; A/D se desplazan lateralmente. Arrastra el ratón sobre el ventanal para girar la cámara en cualquier dirección. Q/E ascienden y descienden. En pantallas táctiles, arrastra la vista y mantén pulsados los mandos.</p><p>El botón Crucero mantiene el movimiento; puedes tomar el control en cualquier momento. El sonar señala el encuentro más cercano. Acércate a unos 18 metros o elige una especie desde la guía de campo.</p><p>Los animales modelados están animados mediante trayectorias de movimiento; los modelos originales no incluyen movimientos articulados de natación.</p><button class="close" id="helpClose">Cerrar ayuda</button></div>
+<div id="fieldbook" hidden><h2>Guía de campo · Mar de Cortés</h2><p>Conoce a los habitantes de este ecosistema y navega hasta las zonas de observación. Las fotografías científicas son reales; los modelos 3D son interpretaciones visuales.</p><div id="fieldList"></div><button class="close" id="bookClose">Volver al océano</button></div>
+<div id="info" hidden><div id="infoPhoto"><img id="specimen" alt=""><div class="photoPlace" id="place"></div></div><div id="infoBody"><span class="label" id="kind">EXPLORACIÓN CIENTÍFICA</span><h2 id="name"></h2><em id="latin"></em><p id="summary"></p><p id="detail"></p><blockquote><strong>Qué observar</strong><span id="observe"></span></blockquote><div class="filmblock" id="filmblock" hidden><strong>Documental real · fragmento breve</strong><p id="filmNote"></p><video id="clip" controls playsinline preload="none" aria-label="Fragmento documental marino"></video><p><a id="filmUrl" target="_blank" rel="noopener">Vídeo original, créditos y licencia</a></p></div><div class="meta"><a id="source" target="_blank" rel="noopener">Documentación científica</a> · <a id="photocredit" target="_blank" rel="noopener">Fotografía y licencia</a></div><div style="margin-top:17px"><button class="close" id="infoClose">Regresar a la cabina</button></div></div></div>
+<div id="loader"><div style="color:#b2e9e8;font-size:12px;letter-spacing:.22em">EXPLORANDUM · EXPEDICIÓN 3D</div><h1>Una ventana al acuario del mundo</h1><p>Un océano continuo para explorar desde una auténtica cabina de investigación, con modelos de fauna marina y encuentros científicos.</p><div id="loadingBar"><i id="progressFill"></i></div><p id="loadingText" style="font-size:13px">Preparando el escenario submarino…</p><button id="start" disabled>Comenzar inmersión</button><a href="submarino-v2.html" class="fallback">La versión cinematográfica V2 sigue disponible</a></div>
+<div id="fallback"><div><h2>Este navegador no puede mostrar el océano 3D</h2><p id="errorMsg">La simulación necesita WebGL y conexión para descargar los modelos.</p><a href="submarino-v2.html">Abrir Submarino V2</a></div></div>
+</main>
+<footer id="credits">EXPLORANDUM · Simulación tridimensional con fauna ilustrativa y datos de especies documentadas del mar de Cortés. No es batimetría real ni predice avistamientos. Los modelos marinos GLB son CC0 de <a href="https://3dassets.dev/packs/ocean-giants-kit" target="_blank" rel="noopener">3DAssets.dev</a> y <a href="https://3dassets.dev/packs/open-ocean-and-deep-sea-life" target="_blank" rel="noopener">Ocean Animals</a>. Las fichas identifican el origen de las fotografías reales y distinguen los vídeos documentales de las recreaciones.</footer>
+<script type="module">
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+const $=id=>document.getElementById(id);
+const RECORDS=[{"x":0,"z":50,"d":17,"name":"Pez ángel de Cortés","latin":"Pomacanthus zonipectus","category":"FAUNA · PECES","text":"Fíjate en las franjas amarillas del cuerpo adulto y su forma alta y comprimida. Este pez vive asociado a arrecifes rocosos en el Pacífico oriental, incluido el golfo de California.","detail":"Su alimentación incluye esponjas y otros organismos fijados al fondo. Los ejemplares juveniles tienen un patrón de colores muy diferente al de los adultos.","observe":"Busca la banda amarilla detrás de la cabeza y el borde claro de la aleta caudal. Compara después con un juvenil: ¡parecen peces distintos!","place":"Fotografía tomada en La Paz, Baja California Sur.","photo":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Pez_%C3%A1ngel_de_Cortez_(Pomacanthus_zonipectus)%2C_La_Paz%2C_Baja_California%2C_M%C3%A9xico%2C_2024-12-20%2C_DD_79.jpg/960px-Pez_%C3%A1ngel_de_Cortez_(Pomacanthus_zonipectus)%2C_La_Paz%2C_Baja_California%2C_M%C3%A9xico%2C_2024-12-20%2C_DD_79.jpg","photographer":"Diego Delso","license":"CC BY-SA 4.0","file":"Pez ángel de Cortez (Pomacanthus zonipectus), La Paz, Baja California, México, 2024-12-20, DD 79.jpg","url":"https://biogeodb.stri.si.edu/sftep/es/thefishes/species/1561"},{"x":-14,"z":133,"d":12,"name":"Praderas de pastos marinos","latin":"Zostera marina (ejemplo)","category":"FLORA MARINA · PLANTAS","text":"Los pastos marinos no son algas: son plantas con flores que viven sumergidas. La luz les permite realizar la fotosíntesis y sus hojas crean refugio para animales pequeños.","detail":"La presencia de praderas depende del lugar, el sustrato, la temperatura y la profundidad. En México existen distintas especies, no una sola pradera igual en toda su costa.","observe":"Observa cómo las hojas forman una verdadera cubierta vegetal. Piensa en los animales pequeños que pueden ocultarse entre ellas.","place":"Fotografía de referencia de Zostera marina tomada fuera del mar de Cortés; ilustra el grupo, no un avistamiento local.","photo":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Zostera_marina_2.jpg/960px-Zostera_marina_2.jpg","photographer":"Dimitar Nikolov Berov","license":"CC BY-SA 4.0","file":"Zostera marina 2.jpg","url":"https://www.biodiversidad.gob.mx/ecosistemas/praderasPastos"},{"x":34,"z":156,"d":15,"name":"Móbulas en La Paz","latin":"Mobula sp. (especie no identificada en la foto)","category":"FAUNA · RAYAS","text":"Las móbulas tienen grandes aletas pectorales que se mueven como alas. Varias especies forman agregaciones en el sur del golfo de California. Algunas saltan fuera del agua.","detail":"La fotografía muestra móbulas en La Paz, pero no permite asignarles una especie con seguridad. M. munkiana, M. thurstoni y M. mobular están documentadas en el golfo. El vídeo comparativo es de otra especie, M. alfredi, filmada en Hawái.","observe":"Compara el movimiento de sus aletas con el de los peces óseos. El vídeo muestra una manta emparentada; no es una identificación de la población de Baja California.","place":"Fotografía de móbulas tomada en La Paz, México. Vídeo de una manta de arrecife grabado en Hawái (especie diferente).","photo":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Mobula_shoal.jpg/960px-Mobula_shoal.jpg","photographer":"TANAKA Juuyoh","license":"CC BY 2.0","file":"Mobula shoal.jpg","url":"https://link.springer.com/article/10.1007/s00227-023-04314-0","video":"https://upload.wikimedia.org/wikipedia/commons/1/13/MVI_0941.webm","videoLabel":"Vídeo comparativo: manta de arrecife (Mobula alfredi) filmada en Hawái; no es una móbula identificada en el mar de Cortés.","videoCredit":"James Heilman · CC BY-SA 3.0 · Wikimedia Commons","videoPage":"https://commons.wikimedia.org/wiki/File:MVI_0941.webm"},{"x":17,"z":210,"d":25,"name":"Lobo marino de California","latin":"Zalophus californianus","category":"FAUNA · MAMÍFEROS","text":"Aunque vive en el mar, respira aire, amamanta a sus crías y necesita salir a la superficie. Sus aletas delanteras impulsan su natación y puede moverse con gran agilidad bajo el agua.","detail":"En Baja California Sur existen colonias de lobos marinos. Su presencia no significa que todos los tramos del litoral tengan una colonia ni que debamos acercarnos a ellos.","observe":"Mira la cabeza, las vibrisas y la posición de las aletas. Compáralo con un pez: ambos nadan, pero sus cuerpos y respiración son muy diferentes.","place":"Fotografía submarina realizada en Baja California Sur.","photo":"https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Lobo_marino_(Zalophus_californianus)%2C_La_Paz%2C_Baja_California%2C_M%C3%A9xico%2C_2024-12-20%2C_DD_60.jpg/960px-Lobo_marino_(Zalophus_californianus)%2C_La_Paz%2C_Baja_California%2C_M%C3%A9xico%2C_2024-12-20%2C_DD_60.jpg","photographer":"Diego Delso","license":"CC BY-SA 4.0","file":"Lobo marino (Zalophus californianus), La Paz, Baja California, México, 2024-12-20, DD 60.jpg","url":"https://conanp.gob.mx/conanp/dominios/cabo_pulmo/biodiversidad.php"},{"x":-38,"z":265,"d":22,"name":"Morena verde panámica","latin":"Gymnothorax castaneus","category":"FAUNA · PECES DE ARRECIFE","text":"Las morenas se esconden a menudo en grietas rocosas. Aunque su cuerpo recuerda a una serpiente, son peces.","detail":"Su boca abierta puede facilitar el paso de agua a través de las branquias; no significa necesariamente una amenaza. Son depredadoras de otros animales marinos.","observe":"Observa las mandíbulas, las pequeñas aberturas branquiales y cómo el cuerpo se introduce entre las rocas. No debes tocarla ni acercarte demasiado.","place":"Fotografía realizada en Cabo Pulmo, Baja California Sur.","photo":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Morena_verde_pan%C3%A1mica_%28Gymnothorax_castaneus%29%2C_Cabo_Pulmo%2C_Baja_California%2C_M%C3%A9xico%2C_2024-12-19%2C_DD_48.jpg/960px-Morena_verde_pan%C3%A1mica_%28Gymnothorax_castaneus%29%2C_Cabo_Pulmo%2C_Baja_California%2C_M%C3%A9xico%2C_2024-12-19%2C_DD_48.jpg","photographer":"Diego Delso","license":"CC BY-SA 4.0","file":"Morena verde panámica (Gymnothorax castaneus), Cabo Pulmo, Baja California, México, 2024-12-19, DD 48.jpg","url":"https://commons.wikimedia.org/wiki/File:Morena_verde_pan%C3%A1mica_(Gymnothorax_castaneus),_Cabo_Pulmo,_Baja_California,_M%C3%A9xico,_2024-12-19,_DD_48.jpg"},{"x":-12,"z":295,"d":20,"name":"Coral verrugoso de Cabo Pulmo","latin":"Pocillopora verrucosa","category":"FAUNA · INVERTEBRADOS","text":"Aunque parece una planta o una roca, un coral está formado por animales llamados pólipos. Sus estructuras calcáreas pueden crear refugios para otros organismos.","detail":"Esta fotografía corresponde a un coral fotografiado en Cabo Pulmo. El parque protege uno de los sistemas coralinos más importantes del golfo de California.","observe":"Acércate visualmente a las ramas y a la textura de la colonia. Una colonia puede estar compuesta por numerosos pequeños pólipos.","place":"Fotografía tomada en Cabo Pulmo, Baja California Sur.","photo":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Coral_(Pocillopora_verrucosa)%2C_Cabo_Pulmo%2C_Baja_California%2C_M%C3%A9xico%2C_2024-12-19%2C_DD_29.jpg/960px-Coral_(Pocillopora_verrucosa)%2C_Cabo_Pulmo%2C_Baja_California%2C_M%C3%A9xico%2C_2024-12-19%2C_DD_29.jpg","photographer":"Diego Delso","license":"CC BY-SA 4.0","file":"Coral (Pocillopora verrucosa), Cabo Pulmo, Baja California, México, 2024-12-19, DD 29.jpg","url":"https://simec.conanp.gob.mx/monitoreo/fichas_monitoreo/9"},{"x":40,"z":327,"d":22,"name":"Pez mariposa barbero","latin":"Johnrandallia nigrirostris","category":"FAUNA · PECES DE ARRECIFE","text":"Este pez del Pacífico oriental suele verse cerca de los arrecifes. Su cuerpo amarillo y la mancha negra de la cabeza ayudan a reconocerlo.","detail":"Se alimenta de pequeños invertebrados. En los arrecifes, distintas especies tienen comportamientos y dietas que permiten compartir espacios y recursos.","observe":"Busca el cuerpo comprimido lateralmente, la coloración amarilla y el distintivo dibujo oscuro de su cabeza.","place":"Fotografía tomada en Cabo Pulmo, Baja California Sur.","photo":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Pez_mariposa_barbero_%28Johnrandallia_nigrirostris%29%2C_Cabo_Pulmo%2C_Baja_California%2C_M%C3%A9xico%2C_2024-12-19%2C_DD_19.jpg/960px-Pez_mariposa_barbero_%28Johnrandallia_nigrirostris%29%2C_Cabo_Pulmo%2C_Baja_California%2C_M%C3%A9xico%2C_2024-12-19%2C_DD_19.jpg","photographer":"Diego Delso","license":"CC BY-SA 4.0","file":"Pez mariposa barbero (Johnrandallia nigrirostris), Cabo Pulmo, Baja California, México, 2024-12-19, DD 19.jpg","url":"https://www.inaturalist.org/taxa/16180-Johnrandallia-nigrirostris"},{"x":12,"z":390,"d":85,"name":"Jacques-Yves Cousteau y el acuario del mundo","latin":"Expediciones y divulgación científica · década de 1980","category":"HISTORIA · EXPLORACIÓN DEL OCÉANO","text":"Jacques-Yves Cousteau fue un explorador y divulgador francés que acercó el mundo submarino a millones de personas mediante sus expediciones y documentales. Su equipo exploró el mar de Cortés en la década de 1980.","detail":"La Sociedad Cousteau sitúa la visita del Alcyone al mar de Cortés en 1986, mientras que su página dedicada a la expedición la presenta como misión de 1987. El documental «Legacy of Cortez» se difundió en 1987. Estas aguas son famosas por su abundante biodiversidad y por la necesidad de protegerla.","observe":"Mira el retrato de Cousteau y el enlace a la expedición. Su aportación fue también divulgar la vida y la fragilidad del océano, no solo descubrir animales.","place":"Fotografía histórica de Jacques-Yves Cousteau, 1976, archivo NASA (dominio público).","photo":"https://upload.wikimedia.org/wikipedia/commons/9/9e/Jacques-Yves_Cousteau.jpg","photographer":"NASA","license":"Dominio público (obra de empleado de NASA)","file":"Jacques-Yves Cousteau.jpg","url":"https://www.cousteau.org/expeditions/the-sea-of-cortez/"},{"x":-31,"z":423,"d":26,"name":"Ballena jorobada","latin":"Megaptera novaeangliae","category":"FAUNA · GRANDES CETÁCEOS","text":"Las ballenas jorobadas son mamíferos marinos que migran grandes distancias. Se acercan a aguas cálidas de México durante la temporada de reproducción y cría.","detail":"Respiran aire mediante espiráculos y las madres amamantan a sus ballenatos. Las ballenas no permanecen siempre en un mismo punto del mar ni pueden observarse en cualquier estación.","observe":"En el vídeo, filmado en Tonga y no en Baja California, fíjate en las aletas pectorales y el movimiento de la cola mientras nada bajo el agua.","place":"Fotografía tomada en Cabo San Lucas, México. Vídeo submarino grabado en Tonga (referencia de la misma especie).","photo":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Ballena_jorobada_%28Megaptera_novaeangliae%29%2C_Cabo_San_Lucas%2C_M%C3%A9xico%2C_2024-12-22%2C_DD_08.jpg/960px-Ballena_jorobada_%28Megaptera_novaeangliae%29%2C_Cabo_San_Lucas%2C_M%C3%A9xico%2C_2024-12-22%2C_DD_08.jpg","photographer":"Diego Delso","license":"CC BY-SA 4.0","file":"Ballena jorobada (Megaptera novaeangliae), Cabo San Lucas, México, 2024-12-22, DD 08.jpg","url":"https://whc.unesco.org/en/list/1182","video":"https://upload.wikimedia.org/wikipedia/commons/7/74/Humpbackwhale_singing.webm","videoLabel":"Vídeo real de ballena jorobada, grabado en Tonga. Se utiliza para observar su forma de nadar, no como imagen de Baja California.","videoCredit":"Sylke Rohrlach · CC BY-SA 4.0 · Wikimedia Commons","videoPage":"https://commons.wikimedia.org/wiki/File:Humpbackwhale_singing.webm"},{"x":0,"z":468,"d":19,"name":"Tiburón ballena de La Paz","latin":"Rhincodon typus","category":"FAUNA · TIBURONES","text":"Es un tiburón, no una ballena, y es el pez más grande del mundo. A pesar de su tamaño, se alimenta filtrando plancton y pequeños organismos del agua.","detail":"Su piel presenta un patrón de puntos y líneas claras que ayuda a diferenciar individuos. En la bahía de La Paz existe una importante zona de agregación estacional; observarlo nunca está garantizado.","observe":"Fíjate en la boca ancha y las hileras de puntos blancos del dorso. ¿Qué detalles lo distinguen de un lobo marino o de un pez ángel?","place":"Fotografía de tiburón ballena realizada en La Paz, Baja California Sur, en diciembre de 2024.","photo":"https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Tibur%C3%B3n_ballena_(Rhincodon_typus)%2C_La_Paz%2C_Baja_California%2C_M%C3%A9xico%2C_2024-12-20%2C_DD_04.jpg/960px-Tibur%C3%B3n_ballena_(Rhincodon_typus)%2C_La_Paz%2C_Baja_California%2C_M%C3%A9xico%2C_2024-12-20%2C_DD_04.jpg","photographer":"Diego Delso","license":"CC BY-SA 4.0","file":"Tiburón ballena (Rhincodon typus), La Paz, Baja California, México, 2024-12-20, DD 04.jpg","url":"https://oceanservice.noaa.gov/facts/bigfish.html","video":"https://upload.wikimedia.org/wikipedia/commons/e/ec/Peshkaqeni_balene.webm","videoLabel":"Vídeo de tiburón ballena. Referencia documental, no grabación verificada del mar de Cortés.","videoCredit":"Linda Mi Linda · CC BY-SA 4.0 · Wikimedia Commons","videoPage":"https://commons.wikimedia.org/wiki/File:Peshkaqeni_balene.webm"}];
+const CDNA='https://cdn.3dassets.dev/assets/';
+const MODELS=[
+{label:'Tiburón ballena',url:CDNA+'5864/v1/model.glb',x:-12,z:50,depth:16,count:1,scale:1.05,speed:0.09},
+{label:'Ballena jorobada',url:CDNA+'5859/v1/model.glb',x:55,z:-225,depth:25,count:1,scale:1,speed:0.07},
+{label:'Delfín mular',url:CDNA+'39330/v1/model.glb',x:18,z:-105,depth:13,count:3,scale:1,speed:0.33},
+{label:'Tiburón mako',url:CDNA+'5869/v1/model.glb',x:-38,z:-175,depth:30,count:2,scale:1.2,speed:0.20},
+{label:'Raya ilustrativa',url:CDNA+'39341/v1/model.glb',x:-26,z:-32,depth:21,count:3,scale:1.55,speed:0.16},
+{label:'Lobo marino de California',url:CDNA+'5894/v1/model.glb',x:40,z:65,depth:12,count:2,scale:1.3,speed:0.31},
+{label:'Tortuga marina',url:CDNA+'39340/v1/model.glb',x:12,z:-160,depth:21,count:2,scale:1.5,speed:0.12}
+];
+const TRACK=[
+{title:'Rocas y fondos arenosos',x:15,z:80,desc:'Mira el contraste entre el fondo y el agua iluminada'},
+{title:'Pastos marinos',x:-65,z:35,desc:'Plantas submarinas en aguas relativamente someras'},
+{title:'Grandes filtradores',x:-12,z:50,desc:'Un tiburón ballena puede acercarse a la ruta'},
+{title:'Arrecife rocoso',x:0,z:-70,desc:'Peces, corales y zonas de refugio'},
+{title:'Aguas abiertas',x:42,z:-155,desc:'Delfines, rayas y otros nadadores'},
+{title:'Talud y aguas más profundas',x:60,z:-230,desc:'Una ballena aparece en la distancia'}
+];
+const POI=RECORDS.map((f,i)=>{const sites=[[0,45],[18,26],[-30,-32],[40,60],[8,-95],[-12,-120],[30,-174],[55,-225],[-12,50],[-42,-165]];const p=sites[i%sites.length];return {...f,wx:p[0],wz:p[1],wy:-(Math.min(68,Math.max(8,f.d||20))),idx:i}});
+let renderer,scene,camera,waterPlane,waterShader,seaBed,hemi,sun,headlight,modelStatus='',models=[],last=performance.now(),inWorld=false,playing=false,dragging=false,dragX=0,dragY=0,quality='medium',frame=0;
+const player={x:0,y:-13,z:125,yaw:0,pitch:-0.09,speed:0,cruise:false,lights:true,found:new Set(),near:-1};
+const held=new Set(),clock=new THREE.Clock();
+const move=new THREE.Vector3(),look=new THREE.Vector3(),tmp=new THREE.Vector3();
+let seed=221;function rand(){seed=(seed*1664525+1013904223)>>>0;return seed/4294967296}
+function clamp(v,min,max){return Math.max(min,Math.min(max,v))}
+function terrain(x,z){const trench=-17*Math.exp(-((x-90)*(x-90)/6500+(z+220)*(z+220)/10000));const reef=10*Math.exp(-((x+18)*(x+18)/3700+(z+60)*(z+60)/2700));return -48+reef+trench+4*Math.sin(x/29)*Math.cos(z/31)+3*Math.sin((x+z)/15)}
+function status(msg){$('message').textContent=msg}
+let noticeTimer=0;function notice(title,subtitle=''){const b=$('mission');$('missionTitle').textContent=title;$('missionDesc').textContent=subtitle;b.classList.add('show');clearTimeout(noticeTimer);noticeTimer=setTimeout(()=>b.classList.remove('show'),3100)}
+function init(){
+ const canvas=$('sea');
+ renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance'});
+ renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.55));
+ renderer.outputColorSpace=THREE.SRGBColorSpace;
+ renderer.toneMapping=THREE.ACESFilmicToneMapping;
+ renderer.toneMappingExposure=1.46;
+ renderer.shadowMap.enabled=false;
+ scene=new THREE.Scene();
+ camera=new THREE.PerspectiveCamera(73,1,.25,520);
+ camera.position.set(player.x,player.y,player.z);
+ hemi=new THREE.HemisphereLight(0xa4f5f0,0x1b3845,2.0);scene.add(hemi);
+ sun=new THREE.DirectionalLight(0xf1fff1,2.8);sun.position.set(-60,80,-90);scene.add(sun);
+ headlight=new THREE.SpotLight(0xcafcf5,60,85,.47,.72,1.6);scene.add(headlight);scene.add(headlight.target);
+ buildWorld();buildSchools();resize();
+ const ro=new ResizeObserver(resize);ro.observe($('world'));window.addEventListener('resize',resize);
+ loadModels();createFieldbook();wire();
+ animate();
+ $('progressFill').style.width='40%';$('loadingText').textContent='Escenario preparado. Se están cargando modelos marinos…';
+ setTimeout(()=>{$('start').disabled=false;$('start').textContent='Comenzar inmersión';$('progressFill').style.width='85%'},900);
+}
+function resize(){if(!renderer)return;const w=$('world').clientWidth,h=$('world').clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}
+function buildWorld(){
+ const geo=new THREE.PlaneGeometry(670,780,110,130);geo.rotateX(-Math.PI/2);const p=geo.attributes.position;
+ for(let i=0;i<p.count;i++)p.setY(i,terrain(p.getX(i),p.getZ(i)));
+ geo.computeVertexNormals();
+ const texCanvas=document.createElement('canvas');texCanvas.width=512;texCanvas.height=512;const tc=texCanvas.getContext('2d');
+ tc.fillStyle='#849385';tc.fillRect(0,0,512,512);
+ const im=tc.getImageData(0,0,512,512);for(let i=0;i<im.data.length;i+=4){const n=(rand()-.5)*50;const f=rand()*.6;im.data[i]=clamp(131+n+f*16,0,255);im.data[i+1]=clamp(149+n*.8+f*13,0,255);im.data[i+2]=clamp(138+n*.7+f*9,0,255);im.data[i+3]=255}tc.putImageData(im,0,0);
+ const texture=new THREE.CanvasTexture(texCanvas);texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.repeat.set(14,16);texture.colorSpace=THREE.SRGBColorSpace;texture.anisotropy=4;
+ seaBed=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({map:texture,color:0x91b3a2,roughness:1,metalness:0,flatShading:false}));scene.add(seaBed);
+ const rockGeo=new THREE.DodecahedronGeometry(1,1);const rockMat=new THREE.MeshStandardMaterial({color:0x687e77,roughness:.98,flatShading:true});
+ const rocks=new THREE.InstancedMesh(rockGeo,rockMat,550);const dummy=new THREE.Object3D();
+ for(let i=0;i<550;i++){
+ const x=(rand()-.5)*450,z=(rand()-.5)*530,y=terrain(x,z);
+ const s=.4+rand()*4.3;dummy.position.set(x,y+s*.24,z);dummy.rotation.set(rand()*2,rand()*6,rand());dummy.scale.set(s*(.75+rand()*.8),s*(.3+rand()*.65),s*(.65+rand()*.8));dummy.updateMatrix();rocks.setMatrixAt(i,dummy.matrix);
+ rocks.setColorAt(i,new THREE.Color().setHSL(.43,.07,.26+rand()*.25));
+ }rocks.instanceMatrix.needsUpdate=true;scene.add(rocks);
+ const boulder=new THREE.DodecahedronGeometry(1,2);const large=new THREE.InstancedMesh(boulder,rockMat,95);
+ for(let i=0;i<95;i++){const x=(rand()-.5)*270,z=-35+(rand()-.5)*170,s=2+rand()*6;dummy.position.set(x,terrain(x,z)+s*.2,z);dummy.rotation.set(rand()*2,rand()*6,rand());dummy.scale.set(s,s*.4,s*1.5);dummy.updateMatrix();large.setMatrixAt(i,dummy.matrix)}large.instanceMatrix.needsUpdate=true;scene.add(large);
+ createCorals();createPlants();
+ // Water surface with subtle oscillation and underside light
+ const waterGeo=new THREE.PlaneGeometry(900,950,28,28);waterGeo.rotateX(-Math.PI/2);
+ const mat=new THREE.MeshPhysicalMaterial({color:0x65c4d7,metalness:.12,roughness:.17,transparent:true,opacity:.38,side:THREE.DoubleSide,depthWrite:false});
+ waterPlane=new THREE.Mesh(waterGeo,mat);waterPlane.position.y=.1;scene.add(waterPlane);
+ const haze=new THREE.Mesh(new THREE.PlaneGeometry(850,850),new THREE.MeshBasicMaterial({color:0xb0ebef,opacity:.14,transparent:true,side:THREE.DoubleSide,depthWrite:false}));haze.rotation.x=-Math.PI/2;haze.position.y=1.2;scene.add(haze);
+ const rays=new THREE.Group();for(let i=0;i<13;i++){const cone=new THREE.Mesh(new THREE.CylinderGeometry(5+rand()*8,0,120,3,1,true),new THREE.MeshBasicMaterial({color:0xb5ffff,transparent:true,opacity:.023+rand()*.023,side:THREE.DoubleSide,depthWrite:false,blending:THREE.AdditiveBlending}));cone.position.set(-180+i*28,-61,-130+i*17);cone.rotation.z=.07*(i%4-1);rays.add(cone)}scene.add(rays);
+ const particles=new Float32Array(1100*3);for(let i=0;i<1100;i++){particles[i*3]=(rand()-.5)*500;particles[i*3+1]=-rand()*65;particles[i*3+2]=(rand()-.5)*650}const pg=new THREE.BufferGeometry();pg.setAttribute('position',new THREE.BufferAttribute(particles,3));const points=new THREE.Points(pg,new THREE.PointsMaterial({color:0xc7f5e8,size:.20,opacity:.35,transparent:true,sizeAttenuation:true}));scene.add(points);
+ // rock arch at the natural reef
+ for(let k=0;k<7;k++){const angle=k/6*Math.PI;const stone=new THREE.Mesh(new THREE.DodecahedronGeometry(3,1),rockMat);stone.position.set(-30+Math.cos(angle)*24,terrain(-30,-78)+8+Math.sin(angle)*19,-78);stone.scale.set(2.1,1.7,2);scene.add(stone)}
+}
+function createCorals(){
+ const colors=[0xc6a68c,0xcba3a8,0x9e979d,0xd1bda1,0xa87c73];
+ const branches=[];for(let c=0;c<105;c++){
+ const x=(rand()-.5)*160,z=-92+rand()*120,y=terrain(x,z);const color=colors[Math.floor(rand()*colors.length)];
+ const colony=new THREE.Group();colony.position.set(x,y,z);
+ const mat=new THREE.MeshStandardMaterial({color,roughness:.83,flatShading:false});
+ for(let j=0;j<4;j++){const length=1+rand()*3.6;const stem=new THREE.Mesh(new THREE.CylinderGeometry(.08,.25,length,6),mat);stem.position.set((j-2)*.7,length*.44,rand()*1.8);stem.rotation.z=(rand()-.5)*1.0;colony.add(stem)}
+ scene.add(colony);branches.push(colony);
+ }
+}
+let bladeGeo,bladeMat,bladeMeshes=[];
+function createPlants(){
+ // Three dimensional seagrass stems with shader displacement
+ bladeGeo=new THREE.PlaneGeometry(.35,5,1,5);bladeGeo.translate(0,2.5,0);
+ bladeMat=new THREE.MeshStandardMaterial({color:0x4c9574,side:THREE.DoubleSide,roughness:.83,transparent:true,opacity:.85});
+ bladeMat.onBeforeCompile=shader=>{shader.uniforms.time={value:0};bladeMat.userData.shader=shader;shader.vertexShader='uniform float time;\n'+shader.vertexShader;shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\ntransformed.x += sin(time * .9 + instanceMatrix[3].x*.17 + instanceMatrix[3].z*.08)*.30*(position.y/5.0);')};
+ const count=620;const mesh=new THREE.InstancedMesh(bladeGeo,bladeMat,count);const obj=new THREE.Object3D();for(let i=0;i<count;i++){const x=-90+rand()*180,z=12+rand()*180,y=terrain(x,z);obj.position.set(x,y,z);obj.rotation.y=rand()*Math.PI*2;obj.scale.set(.6+rand()*1.0,.3+rand()*1.8,1);obj.updateMatrix();mesh.setMatrixAt(i,obj.matrix)}scene.add(mesh);bladeMeshes.push(mesh);
+}
+const schools=[];
+function buildSchools(){
+ const colors=[0xb7e3d8,0xffdba1,0x86bfbd,0xd1dae6];
+ for(let group=0;group<6;group++){const root=new THREE.Group();const centerX=-50+rand()*120,centerZ=30-rand()*300,centerY=-8-rand()*18;
+ root.position.set(centerX,centerY,centerZ);
+ const mat=new THREE.MeshStandardMaterial({color:colors[group%4],metalness:.32,roughness:.5});
+ const bodyGeo=new THREE.SphereGeometry(.35,9,7),tailGeo=new THREE.ConeGeometry(.25,.66,3);
+ for(let i=0;i<24;i++){const g=new THREE.Group();const body=new THREE.Mesh(bodyGeo,mat);body.scale.set(.8,.55,2);g.add(body);const tail=new THREE.Mesh(tailGeo,mat);tail.rotation.x=Math.PI/2;tail.position.z=.84;g.add(tail);g.position.set((rand()-.5)*14,(rand()-.5)*6,(rand()-.5)*14);g.scale.setScalar(.6+rand()*.5);root.add(g)}
+ scene.add(root);schools.push({root,cx:centerX,cz:centerZ,cy:centerY,phase:rand()*6})}
+}
+function loadModels(){
+ const loader=new GLTFLoader(),tasks=[];
+ for(const spec of MODELS){
+ tasks.push(new Promise(resolve=>{
+ loader.load(spec.url,gltf=>{
+ const root=gltf.scene;root.traverse(o=>{if(o.isMesh){o.castShadow=false;o.receiveShadow=false;if(o.material)o.material.side=THREE.FrontSide}});
+ for(let n=0;n<spec.count;n++){const group=root.clone(true);group.scale.setScalar(spec.scale*(.92+rand()*.16));const anchor=new THREE.Group();anchor.add(group);scene.add(anchor);
+ const arc=rand()*6.28;models.push({anchor,spec,arc,phase:rand()*6.28,offset:n*2*Math.PI/spec.count,loaded:true});}
+ resolve(true);
+ },undefined,err=>{console.warn('3D model unavailable',spec.label,err);createFallbackFish(spec);resolve(false)})}));
+ }
+ // One assembled coral scene as a visual anchor; optional
+ tasks.push(new Promise(resolve=>{loader.load('https://cdn.3dassets.dev/assets/39367/v1/model.glb',g=>{
+ const reef=g.scene;reef.position.set(-45,terrain(-45,-110)-1,-110);reef.scale.setScalar(1.6);scene.add(reef);resolve(true);
+ },undefined,()=>resolve(false))}));
+ Promise.allSettled(tasks).then(results=>{const valid=results.filter(x=>x.status==='fulfilled'&&x.value).length;modelStatus=valid+' / '+tasks.length+' paquetes cargados';$('loadingText').textContent='Océano preparado · '+valid+' conjuntos de modelos 3D disponibles';$('progressFill').style.width='100%'});
+}
+function createFallbackFish(spec){const group=new THREE.Group();const body=new THREE.Mesh(new THREE.SphereGeometry(1,12,10),new THREE.MeshStandardMaterial({color:0x9cbec5,roughness:.7,metalness:.1}));body.scale.set(1,.38,2);group.add(body);
+ const tail=new THREE.Mesh(new THREE.ConeGeometry(.7,1.5,4),body.material);tail.rotation.x=Math.PI/2;tail.position.z=2;group.add(tail);
+ group.position.set(spec.x,-spec.depth,spec.z);group.scale.setScalar(spec.scale);scene.add(group);models.push({anchor:group,spec,arc:0,phase:0,offset:0,loaded:false})}
+function createFieldbook(){
+ const list=$('fieldList');
+ for(const f of POI){const btn=document.createElement('button');btn.className='fieldCard';btn.type='button';
+ const im=document.createElement('img');if(f.photo){im.src=f.photo;im.loading='lazy';im.alt='Fotografía: '+f.name;im.onerror=()=>{if(!im.dataset.retry&&f.file){im.dataset.retry='1';im.src='https://commons.wikimedia.org/wiki/Special:Redirect/file/'+encodeURIComponent(f.file)+'?width=420'}else im.style.display='none'}}else im.style.display='none';
+ const title=document.createElement('strong');title.textContent=f.name;const sub=document.createElement('small');sub.textContent=f.latin||f.category;btn.append(im,title,sub);btn.onclick=()=>{teleport(f);closeBook();};list.append(btn)}
+}
+function closeBook(){$('fieldbook').hidden=true;playing=true}
+function teleport(f){player.x=f.wx;player.z=f.wz+14;player.y=clamp(f.wy,-75,-5);player.y=Math.max(player.y,terrain(player.x,player.z)+4);player.yaw=0;player.pitch=0;player.cruise=false;$('cruise').classList.remove('is-on');notice(f.name,'Señal científica localizada. Acércate y pulsa Investigar.')}
+function findNear(){
+ let best=null,dist=Infinity;for(const f of POI){const d=Math.hypot(player.x-f.wx,player.z-f.wz,(player.y-f.wy)*.7);if(d<dist){best=f;dist=d}}
+ player.near=dist<22?best.idx:-1;
+ $('inspect').disabled=player.near<0;$('prompt').classList.toggle('on',player.near>=0);
+ if(player.near>=0)$('nearText').textContent='Señal próxima: '+POI[player.near].name;
+ return {best,dist}
+}
+function openInfo(i){if(i==null||i<0||i>=POI.length)return;const f=POI[i];player.cruise=false;held.clear();playing=false;
+ $('name').textContent=f.name;$('latin').textContent=f.latin||'';$('kind').textContent=f.category||'BIOLOGÍA MARINA';$('summary').textContent=f.text||'';$('detail').textContent=f.detail||'';$('observe').textContent=f.observe||'Observa atentamente los rasgos anatómicos visibles.';$('place').textContent=f.place||'Ilustración documental';
+ const img=$('specimen');if(f.photo){img.hidden=false;img.src=f.photo;img.alt='Fotografía de '+f.name;img.onerror=()=>{if(f.file&&!img.dataset.retry){img.dataset.retry='1';img.src='https://commons.wikimedia.org/wiki/Special:Redirect/file/'+encodeURIComponent(f.file)+'?width=960'}else img.hidden=true}}else img.hidden=true;
+ $('source').href=f.url||'https://oceanservice.noaa.gov/';$('photocredit').href=f.file?'https://commons.wikimedia.org/wiki/File:'+encodeURIComponent(f.file.replaceAll(' ','_')):f.url||'#';
+ $('photocredit').textContent=f.photographer?'Fotografía: '+f.photographer+' · '+(f.license||'ver licencia'):'Fuentes e imágenes';
+ const clip=$('clip');clip.pause();clip.removeAttribute('src');clip.load();$('filmblock').hidden=!f.video;
+ if(f.video){clip.src=f.video;clip.load();$('filmNote').textContent=f.videoLabel||'Vídeo documental de referencia';$('filmUrl').href=f.videoPage||f.url}
+ $('info').hidden=false;player.found.add(i);try{localStorage.setItem('explorandum-oceano3d-found',JSON.stringify([...player.found]))}catch(e){}
+}
+function closeInfo(){const clip=$('clip');clip.pause();$('info').hidden=true;playing=true}
+function map(){const c=$('miniMap'),ctx=c.getContext('2d'),w=160,h=170;ctx.clearRect(0,0,w,h);ctx.fillStyle='#062537';ctx.fillRect(0,0,w,h);
+ ctx.strokeStyle='#4a99a466';ctx.lineWidth=1;for(let i=16;i<w;i+=27){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i,h);ctx.stroke()}for(let j=15;j<h;j+=26){ctx.beginPath();ctx.moveTo(0,j);ctx.lineTo(w,j);ctx.stroke()}
+ const conv=(x,z)=>[80+x*.22,30+(125-z)*.28];
+ for(const f of POI){const [x,y]=conv(f.wx,f.wz);if(y<10||y>165)continue;ctx.fillStyle=player.found.has(f.idx)?'#acf6de':'#f6bf86';ctx.beginPath();ctx.arc(x,y,3.3,0,Math.PI*2);ctx.fill()}
+ const [px,py]=conv(player.x,player.z);ctx.save();ctx.translate(px,py);ctx.rotate(-player.yaw);ctx.fillStyle='#e0fff7';ctx.beginPath();ctx.moveTo(0,-8);ctx.lineTo(-6,7);ctx.lineTo(6,7);ctx.closePath();ctx.fill();ctx.restore();
+ ctx.fillStyle='#dbf6f5';ctx.font='11px system-ui';ctx.fillText('MAPA EXPLORACIÓN',10,14)
+}
+function wire(){
+ const actions={w:'forward',s:'back',a:'left',d:'right',q:'up',e:'down',ArrowUp:'forward',ArrowDown:'back',ArrowLeft:'turnLeft',ArrowRight:'turnRight',Shift:'fast'};
+ window.addEventListener('keydown',e=>{if(e.target.matches('input,textarea'))return;const k=actions[e.key];if(k){held.add(k);e.preventDefault()}if(e.key.toLowerCase()==='f'&&!$('inspect').disabled)openInfo(player.near);if(e.key==='Escape'){closeInfo();closeBook()}});
+ window.addEventListener('keyup',e=>{if(actions[e.key])held.delete(actions[e.key])});window.addEventListener('blur',()=>held.clear());
+ for(const b of document.querySelectorAll('[data-hold]')){const direction=b.dataset.hold;b.addEventListener('pointerdown',e=>{e.preventDefault();b.setPointerCapture(e.pointerId);held.add(direction)});for(const ev of ['pointerup','pointercancel','lostpointercapture'])b.addEventListener(ev,()=>held.delete(direction))}
+ const canvas=$('sea');canvas.addEventListener('pointerdown',e=>{dragging=true;dragX=e.clientX;dragY=e.clientY;canvas.setPointerCapture(e.pointerId)});canvas.addEventListener('pointermove',e=>{if(!dragging||!playing)return;const dx=e.clientX-dragX,dy=e.clientY-dragY;player.yaw-=dx*.0038;player.pitch=clamp(player.pitch-dy*.0029,-1.17,1.15);dragX=e.clientX;dragY=e.clientY});for(const ev of ['pointerup','pointercancel','lostpointercapture'])canvas.addEventListener(ev,()=>dragging=false);
+ canvas.addEventListener('wheel',e=>{if(!playing)return;e.preventDefault();player.y=clamp(player.y-Math.sign(e.deltaY)*2.2,-83,-1.3)},{passive:false});
+ $('sonar').onclick=()=>{const p=findNear();if(p.best){const d=Math.round(p.dist);notice('SONAR · '+p.best.name,'Distancia aproximada '+d+' metros de simulación');status('Sonar detecta '+p.best.name+' a '+d+' metros. Puedes elegirlo en la guía de especies.')}const ring=$('sonarCircle');ring.classList.remove('ping');void ring.offsetWidth;ring.classList.add('ping');
+ try{const AC=window.AudioContext||window.webkitAudioContext;if(AC){const a=new AC(),o=a.createOscillator(),g=a.createGain();o.frequency.setValueAtTime(960,a.currentTime);o.frequency.exponentialRampToValueAtTime(360,a.currentTime+.45);g.gain.setValueAtTime(.13,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.45);o.connect(g);g.connect(a.destination);o.start();o.stop(a.currentTime+.45);o.onended=()=>a.close()}}catch(e){}};
+ $('cruise').onclick=()=>{player.cruise=!player.cruise;$('cruise').classList.toggle('is-on',player.cruise);$('cruise').textContent=player.cruise?'Ⅱ Detener crucero':'⏵ Crucero';status(player.cruise?'Velocidad de crucero activada. Dirige con el ratón o el teclado.':'Pilotaje manual activado.')};
+ $('lights').onclick=()=>{player.lights=!player.lights;$('lights').textContent=player.lights?'☀ Focos':'☾ Focos OFF';status(player.lights?'Focos encendidos.':'Focos apagados: la visibilidad depende de la luz natural.')};
+ $('book').onclick=()=>{$('fieldbook').hidden=false;playing=false;held.clear()};
+ $('bookClose').onclick=closeBook;$('inspect').onclick=()=>openInfo(player.near);$('openNear').onclick=()=>openInfo(player.near);$('infoClose').onclick=closeInfo;
+ $('helpBtn').onclick=()=>{$('help').hidden=!$('help').hidden};$('helpClose').onclick=()=>$('help').hidden=true;
+ $('full').onclick=()=>{if(!document.fullscreenElement)$('world').requestFullscreen?.().catch(()=>status('Este navegador no permite el modo de pantalla completa.'));else document.exitFullscreen?.()};
+ $('start').onclick=()=>{$('loader').style.display='none';inWorld=true;playing=true;notice('Bienvenidos al mar de Cortés','Explora este mundo libremente. Primer destino: arrecife rocoso.')};
+ window.addEventListener('pagehide',()=>{playing=false;const clip=$('clip');clip.pause()});
+}
+function animate(){
+ const t=clock.getElapsedTime(),dt=Math.min(.05,(performance.now()-last)/1000);last=performance.now();frame++;
+ if(playing){
+ const forward=(held.has('forward')?1:0)-(held.has('back')?1:0)+(player.cruise?1:0);const side=(held.has('right')?1:0)-(held.has('left')?1:0);
+ const vertical=(held.has('up')?1:0)-(held.has('down')?1:0);
+ player.yaw+=(held.has('turnRight')?1:0)*dt*.8-(held.has('turnLeft')?1:0)*dt*.8;
+ const factor=(held.has('fast')?1.65:1);player.speed=forward*factor*9.5;const vx=Math.sin(player.yaw)*forward+Math.cos(player.yaw)*side;const vz=-Math.cos(player.yaw)*forward+Math.sin(player.yaw)*side;
+ player.x=clamp(player.x+vx*dt*9.5*factor,-290,290);player.z=clamp(player.z+vz*dt*9.5*factor,-315,350);player.y=clamp(player.y+vertical*dt*11,-83,-1.2);
+ const minHeight=terrain(player.x,player.z)+3.4;if(player.y<minHeight)player.y=minHeight;
+ camera.position.set(player.x,player.y,player.z);camera.rotation.order='YXZ';camera.rotation.y=player.yaw;camera.rotation.x=player.pitch;
+ const depth=-player.y,light=Math.exp(-depth/37),color=new THREE.Color().setRGB(.01+light*.15,.055+light*.34,.09+light*.47);
+ scene.background=color;scene.fog=new THREE.FogExp2(color,.0062+depth*.00018);
+ hemi.intensity=.36+2.8*light;sun.intensity=.1+3.1*light;headlight.intensity=player.lights?50:0;headlight.position.copy(camera.position);look.set(Math.sin(player.yaw)*Math.cos(player.pitch),Math.sin(player.pitch),-Math.cos(player.yaw)*Math.cos(player.pitch));headlight.target.position.copy(camera.position).addScaledVector(look,20);
+ if(waterPlane){waterPlane.material.opacity=.22+Math.sin(t*.25)*.03;waterPlane.position.y=.1+Math.sin(t*.5)*.14}
+ if(bladeMat?.userData?.shader)bladeMat.userData.shader.uniforms.time.value=t;
+ models.forEach((m,i)=>{const {anchor,spec,phase,offset}=m;const q=t*spec.speed+phase+offset;const radius=spec.label.includes('Ballena')?18:8;anchor.position.set(spec.x+Math.cos(q)*radius,-spec.depth+Math.sin(q*.7)*1.7,spec.z+Math.sin(q)*radius);anchor.rotation.y=Math.PI/2-q;anchor.rotation.z=Math.sin(q*1.9)*.035;anchor.rotation.x=Math.sin(q*2)*.017});
+ schools.forEach((s,i)=>{s.root.position.x=s.cx+Math.sin(t*.26+s.phase)*10;s.root.position.z=s.cz+Math.cos(t*.32+s.phase)*9;s.root.rotation.y=Math.sin(t*.27+s.phase)*.4});
+ $('depth').textContent='PROFUNDIDAD · '+depth.toFixed(1)+' m';$('pressure').textContent='PRESIÓN ≈ '+(1+depth/10.3).toFixed(1).replace('.',',')+' atm';$('heading').textContent='RUMBO · '+String((Math.round(player.yaw*180/Math.PI)%360+360)%360).padStart(3,'0')+'°';
+ $('speed').textContent='VELOCIDAD · '+Math.abs(player.speed).toFixed(1);$('discovered').textContent='ENCUENTROS · '+player.found.size+' / '+POI.length;
+ $('habitat').textContent='HÁBITAT · '+(depth<7?'SUPERFICIE':depth<25?'AGUAS SOMERAS':depth<50?'ARRECIFE / TALUD':'AGUAS PROFUNDAS');
+ if(frame%12===0){const f=findNear();if(frame%36===0)map();if(f.dist<22)status('Próximo avistamiento: '+f.best.name+'. Pulsa Investigar.')}
+ }
+ // Render also while intro is visible so 3D loads behind it
+ renderer.render(scene,camera);
+ requestAnimationFrame(animate);
+}
+try{
+ if(!document.createElement('canvas').getContext('webgl2')&&!document.createElement('canvas').getContext('webgl'))throw new Error('WebGL no está disponible');
+ const saved=JSON.parse(localStorage.getItem('explorandum-oceano3d-found')||'[]');saved.forEach(i=>{if(Number.isInteger(i)&&i>=0&&i<POI.length)player.found.add(i)});
+ init();
+}catch(error){console.error(error);$('fallback').classList.add('on');$('errorMsg').textContent=error.message||'No se ha podido iniciar la escena';$('loader').style.display='none'}
+</script></body></html>
