@@ -134,6 +134,34 @@ Los clips cortos proceden de Wikimedia Commons: su localización real figura en 
 "use strict";
 const $=id=>document.getElementById(id), deck=$("deck"), view=$("view"), controls=$("controls");
 const bolts=$("frame-bolts");[["4%","18%"],["9%","7%"],["23%","4%"],["45%","3%"],["67%","4%"],["87%","7%"],["95%","18%"],["3%","45%"],["96%","45%"],["4%","72%"],["96%","72%"],["13%","90%"],["87%","90%"]].forEach(([left,top])=>{let b=document.createElement('i');b.className='bolt';b.style.left=left;b.style.top=top;bolts.append(b)});
+
+/* MICRODOCUMENTALES: vídeo real observado a través del ventanal */
+const seaVideo=$("videoSea"),videoWording=$("videoWording"),skipVideo=$("skipVideo");
+let currentClip=-1,clipDeadline=0,videoBusy=false,gestureOccurred=false;
+const clipSeen=new Set();
+document.addEventListener("pointerdown",()=>{gestureOccurred=true},{passive:true});
+document.addEventListener("keydown",()=>{gestureOccurred=true},{passive:true});
+function stopClip(showDetails=false){
+const finished=currentClip;
+videoBusy=false;currentClip=-1;seaVideo.pause();seaVideo.classList.remove("on");
+videoWording.classList.remove("on");skipVideo.classList.remove("on");clipDeadline=0;
+if(showDetails && finished>=0 && $("dialog").hidden) {notify("Avistamiento: "+finds[finished].name+". Pulsa Investigar para conocer la especie.");}
+}
+function playClip(i){
+const f=finds[i];if(!f?.video)return;
+stopClip();held.clear();state.mouse=false;currentClip=i;videoBusy=true;clipSeen.add(i);clipDeadline=performance.now()+10000;
+seaVideo.src=f.video;seaVideo.muted=true;seaVideo.playsInline=true;seaVideo.loop=false;
+seaVideo.preload="auto";videoWording.textContent="VÍDEO REAL · "+f.name+" · "+(f.videoLabel||"Material documental");
+videoWording.classList.add("on");skipVideo.classList.add("on");
+const promise=seaVideo.play();
+if(promise?.then)promise.then(()=>{if(videoBusy&&currentClip===i)seaVideo.classList.add("on")}).catch(()=>{stopClip();notify("No se pudo reproducir este vídeo en el navegador. Abre su versión en Wikimedia Commons desde la ficha.")});
+else seaVideo.classList.add("on");
+}
+seaVideo.addEventListener("ended",()=>stopClip(true));
+seaVideo.addEventListener("error",()=>{if(videoBusy){const id=currentClip;stopClip();notify("Vídeo no disponible en este navegador. Puedes consultar la grabación original en la ficha de "+finds[id].name+".")}});
+skipVideo.onclick=()=>stopClip();
+$("clipPlay").onclick=()=>{const i=Number($("dialog").dataset.findid);if(Number.isInteger(i)&&finds[i]?.video){$("dialog").hidden=true;playClip(i)}};
+
 const photos=["https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Pez_%C3%A1ngel_de_Cortez_(Pomacanthus_zonipectus)%2C_La_Paz%2C_Baja_California%2C_M%C3%A9xico%2C_2024-12-20%2C_DD_79.jpg/960px-Pez_%C3%A1ngel_de_Cortez_(Pomacanthus_zonipectus)%2C_La_Paz%2C_Baja_California%2C_M%C3%A9xico%2C_2024-12-20%2C_DD_79.jpg","https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Zostera_marina_2.jpg/960px-Zostera_marina_2.jpg","https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Lobo_marino_(Zalophus_californianus)%2C_La_Paz%2C_Baja_California%2C_M%C3%A9xico%2C_2024-12-20%2C_DD_60.jpg/960px-Lobo_marino_(Zalophus_californianus)%2C_La_Paz%2C_Baja_California%2C_M%C3%A9xico%2C_2024-12-20%2C_DD_60.jpg","https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Coral_(Pocillopora_verrucosa)%2C_Cabo_Pulmo%2C_Baja_California%2C_M%C3%A9xico%2C_2024-12-19%2C_DD_29.jpg/960px-Coral_(Pocillopora_verrucosa)%2C_Cabo_Pulmo%2C_Baja_California%2C_M%C3%A9xico%2C_2024-12-19%2C_DD_29.jpg","photo-1646491092836-75a13d9a6e31","https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Tibur%C3%B3n_ballena_(Rhincodon_typus)%2C_La_Paz%2C_Baja_California%2C_M%C3%A9xico%2C_2024-12-20%2C_DD_04.jpg/960px-Tibur%C3%B3n_ballena_(Rhincodon_typus)%2C_La_Paz%2C_Baja_California%2C_M%C3%A9xico%2C_2024-12-20%2C_DD_04.jpg"];
 const verifiedImages=[{"file":"Pez ángel de Cortez (Pomacanthus zonipectus), La Paz, Baja California, México, 2024-12-20, DD 79.jpg","url":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Pez_%C3%A1ngel_de_Cortez_(Pomacanthus_zonipectus)%2C_La_Paz%2C_Baja_California%2C_M%C3%A9xico%2C_2024-12-20%2C_DD_79.jpg/960px-Pez_%C3%A1ngel_de_Cortez_(Pomacanthus_zonipectus)%2C_La_Paz%2C_Baja_California%2C_M%C3%A9xico%2C_2024-12-20%2C_DD_79.jpg"},{"file":"Zostera marina 2.jpg","url":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Zostera_marina_2.jpg/960px-Zostera_marina_2.jpg"},{"file":"Lobo marino (Zalophus californianus), La Paz, Baja California, México, 2024-12-20, DD 60.jpg","url":"https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Lobo_marino_(Zalophus_californianus)%2C_La_Paz%2C_Baja_California%2C_M%C3%A9xico%2C_2024-12-20%2C_DD_60.jpg/960px-Lobo_marino_(Zalophus_californianus)%2C_La_Paz%2C_Baja_California%2C_M%C3%A9xico%2C_2024-12-20%2C_DD_60.jpg"},{"file":"Coral (Pocillopora verrucosa), Cabo Pulmo, Baja California, México, 2024-12-19, DD 29.jpg","url":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Coral_(Pocillopora_verrucosa)%2C_Cabo_Pulmo%2C_Baja_California%2C_M%C3%A9xico%2C_2024-12-19%2C_DD_29.jpg/960px-Coral_(Pocillopora_verrucosa)%2C_Cabo_Pulmo%2C_Baja_California%2C_M%C3%A9xico%2C_2024-12-19%2C_DD_29.jpg"}];
 const zones=[
@@ -160,7 +188,11 @@ for(let i=0;i<70;i++){const p=document.createElement("i");p.style.setProperty("-
 function notify(txt){const n=$("notice");n.textContent=txt;n.classList.add("visible");clearTimeout(noteTimer);noteTimer=setTimeout(()=>n.classList.remove("visible"),3200)}
 function distanceTo(p){return Math.hypot(state.z-p.z,(state.x-p.x)*1.6)}
 function photoLink(f){return f.file?'https://commons.wikimedia.org/wiki/File:'+encodeURIComponent(f.file.replaceAll(' ','_')):''}
-function opening(i){if(i<0)return;const f=finds[i];$("discoveryTitle").textContent=f.name;$("discoveryText").textContent=f.text;$("discoveryDetail").textContent=f.detail;$("source").href=f.url;$("specimenType").textContent=f.category;$("specimenLatin").textContent=f.latin;$("specimenObserve").textContent=f.observe;$("specimenPlace").textContent=f.place;
+function opening(i){if(i<0)return;stopClip();const f=finds[i];$("dialog").dataset.findid=String(i);
+const clipSection=$("clipSection");clipSection.classList.toggle("show",!!f.video);
+if(f.video){$("clipInfo").textContent=f.videoLabel+" · "+f.videoCredit;
+$("clipPage").href=f.videoPage||"#"}
+$("discoveryTitle").textContent=f.name;$("discoveryText").textContent=f.text;$("discoveryDetail").textContent=f.detail;$("source").href=f.url;$("specimenType").textContent=f.category;$("specimenLatin").textContent=f.latin;$("specimenObserve").textContent=f.observe;$("specimenPlace").textContent=f.place;
 const img=$("specimenImg"),hero=$("specimenHero");hero.classList.toggle("empty",!f.photo);img.hidden=!f.photo;img.alt=f.photo?"Fotografía real: "+f.name:"";if(f.photo){img.src=f.photo;img.dataset.backup="";img.onerror=()=>{if(!img.dataset.backup&&f.file){img.dataset.backup="1";img.src="https://commons.wikimedia.org/wiki/Special:Redirect/file/"+encodeURIComponent(f.file)+"?width=960";return}img.hidden=true;hero.classList.add("empty");$("specimenPlace").textContent="No se pudo cargar la fotografía aquí. Puedes abrir el original desde su crédito."}}
 const credit=$("photoCredit");credit.replaceChildren();if(f.photographer){const a=document.createElement('a');a.href=photoLink(f);a.target='_blank';a.rel='noopener';a.textContent="Fotografía: "+f.photographer+" · "+f.license+" · Ver imagen y licencia";credit.append(a)}
 $("dialog").hidden=false;held.clear();state.mouse=false;}
@@ -169,7 +201,7 @@ const m=$("mini"),ctx=m.getContext("2d");function drawMap(){ctx.clearRect(0,0,14
 function redraw(now){const dt=Math.min(.05,(now-last)/1000);last=now;frame++;
 let go=held.has("w")?1:held.has("s")?-1:0;
 let turn=(held.has("d")?1:0)-(held.has("a")?1:0),vertical=(held.has("e")?1:0)-(held.has("q")?1:0);
-if(state.mouse&&!$("fieldbook").hidden){state.mouse=false}if(state.mouse){go=1;turn+=(state.aimX-.5)*1.3;vertical+=(state.aimY-.45)*.8}
+if(state.mouse&&!$("fieldbook").hidden){state.mouse=false}if(videoBusy){go=0;turn=0;vertical=0;}if(state.mouse){go=1;turn+=(state.aimX-.5)*1.3;vertical+=(state.aimY-.45)*.8}
 state.heading+=turn*dt*.55;state.x+=Math.sin(state.heading)*go*dt*16;state.z+=Math.cos(state.heading)*go*dt*16;
 state.x=Math.max(-55,Math.min(55,state.x));state.z=Math.max(0,Math.min(499,state.z));state.d=Math.max(1,Math.min(140,state.d+vertical*dt*17));
 const index=Math.min(5,Math.floor(state.z/83));if(index!==state.photo)setPhoto(index);
@@ -188,11 +220,15 @@ fish.forEach((it,i)=>{const x=((it.x+now*.001*it.speed)%1400)-150,y=it.y+Math.si
 weeds.forEach((it,i)=>{const visible=state.photo===1?1:state.photo===4?.02:.34;it.g.setAttribute("transform","translate("+(it.x-state.x*1.1)+",660) scale("+(it.scale*visible)+") rotate("+Math.sin(now*.001+it.phase)*4+")")});
 $("meter").textContent="PROFUNDIDAD "+state.d.toFixed(1)+" m";$("atm").textContent="PRESIÓN ≈ "+(1+state.d/10.3).toFixed(1).replace(".",",")+" atm";$("bearing").textContent="RUMBO "+String(Math.round((state.heading*180/Math.PI%360+360)%360)).padStart(3,"0")+"°";$("speed").textContent="VELOCIDAD "+(Math.abs(go)*4).toFixed(1);$("progress").textContent="HALLAZGOS "+state.discover.size+"/"+finds.length;
 $("zoneName").textContent=zones[state.photo][0];$("zoneDesc").textContent=zones[state.photo][1];
-near=findNear();$("find").disabled=near<0;$("signal").classList.toggle("show",near>=0&&!state.discover.has(near));let best=finds.map((f,i)=>({i,d:distanceTo(f)})).sort((a,b)=>a.d-b.d)[0];nearestPreview=best.d<78?best.i:-1;const c=$("encounter");c.classList.toggle("show",nearestPreview>=0&&!state.discover.has(nearestPreview));if(nearestPreview>=0){const f=finds[nearestPreview];$("encounterName").textContent=f.name;$("encounterDist").textContent=near===nearestPreview?"¡Puedes investigar!":"Señal a "+Math.round(best.d)+" unidades";if(f.photo){const image=$("encounterImg");if(image.dataset.src!==f.photo){image.src=f.photo;image.dataset.src=f.photo}image.hidden=false}else{$("encounterImg").hidden=true}}if(frame%7===0)drawMap();requestAnimationFrame(redraw)}
-function investigate(){if(near<0){notify("No hay señales suficientemente próximas. Pulsa «Ir a próxima señal» o usa el sonar.");return}const f=finds[near];opening(near);state.discover.add(near);$("signal").classList.remove("show");try{localStorage.setItem("explorandum-cinema-v2-found",JSON.stringify([...state.discover]))}catch(e){}notify("Avistamiento documentado: "+f.name)}
+near=findNear();$("find").disabled=near<0;
+if(videoBusy && performance.now()>=clipDeadline)stopClip(true);
+if(!videoBusy && $("dialog").hidden && $("fieldbook").hidden && gestureOccurred && near>=0){
+const f=finds[near];if(f.video && !clipSeen.has(near) && distanceTo(f)<13){playClip(near);}
+}$("signal").classList.toggle("show",near>=0&&!state.discover.has(near));let best=finds.map((f,i)=>({i,d:distanceTo(f)})).sort((a,b)=>a.d-b.d)[0];nearestPreview=best.d<78?best.i:-1;const c=$("encounter");c.classList.toggle("show",nearestPreview>=0&&!state.discover.has(nearestPreview));if(nearestPreview>=0){const f=finds[nearestPreview];$("encounterName").textContent=f.name;$("encounterDist").textContent=near===nearestPreview?"¡Puedes investigar!":"Señal a "+Math.round(best.d)+" unidades";if(f.photo){const image=$("encounterImg");if(image.dataset.src!==f.photo){image.src=f.photo;image.dataset.src=f.photo}image.hidden=false}else{$("encounterImg").hidden=true}}if(frame%7===0)drawMap();requestAnimationFrame(redraw)}
+function investigate(){stopClip();if(near<0){notify("No hay señales suficientemente próximas. Pulsa «Ir a próxima señal» o usa el sonar.");return}const f=finds[near];opening(near);state.discover.add(near);$("signal").classList.remove("show");try{localStorage.setItem("explorandum-cinema-v2-found",JSON.stringify([...state.discover]))}catch(e){}notify("Avistamiento documentado: "+f.name)}
 $("find").onclick=investigate;$("signal").onclick=investigate;$("close").onclick=()=>$("dialog").hidden=true;
 const field=$("fieldbook"),list=$("fieldList");
-function station(i){const f=finds[i];$("dialog").hidden=true;field.hidden=true;state.mouse=false;held.clear();state.x=f.x;state.z=Math.max(0,f.z-9);state.d=f.d;state.heading=0;notify("Has llegado a la zona de "+f.name+". Acércate y pulsa Investigar.");}
+function station(i){stopClip();const f=finds[i];$("dialog").hidden=true;field.hidden=true;state.mouse=false;held.clear();state.x=f.x;state.z=Math.max(0,f.z-9);state.d=f.d;state.heading=0;notify("Has llegado a la zona de "+f.name+". Acércate y pulsa Investigar.");}
 finds.forEach((f,i)=>{const b=document.createElement('button');b.type='button';b.className='fieldItem';if(f.photo){const img=document.createElement('img');img.src=f.photo;img.alt="Imagen real de "+f.name;img.loading='lazy';img.onerror=()=>{if(!img.dataset.backup){img.dataset.backup='1';img.src='https://commons.wikimedia.org/wiki/Special:Redirect/file/'+encodeURIComponent(f.file)+'?width=480'}else img.style.display='none'};b.append(img)}const name=document.createElement('strong');name.textContent=f.name;const subtitle=document.createElement('small');subtitle.textContent=f.latin;const go=document.createElement('span');go.textContent='Ir a la zona de avistamiento →';b.append(name,subtitle,go);b.addEventListener('click',()=>station(i));list.append(b)});
 $("fieldOpen").onclick=()=>{field.hidden=!field.hidden;$("dialog").hidden=true;held.clear();state.mouse=false};
 $("fieldClose").onclick=()=>field.hidden=true;
@@ -206,7 +242,7 @@ window.addEventListener("keydown",e=>{if(e.target.matches("textarea,input"))retu
 window.addEventListener("keyup",e=>held.delete(keys[e.key]||e.key.toLowerCase()));window.addEventListener("blur",()=>{held.clear();state.mouse=false});
 document.querySelectorAll("[data-hold]").forEach(btn=>{const k=btn.dataset.hold;btn.addEventListener("pointerdown",e=>{e.preventDefault();btn.setPointerCapture?.(e.pointerId);held.add(k)});for(const event of ["pointerup","pointercancel","lostpointercapture"])btn.addEventListener(event,()=>held.delete(k))});
 function movePointer(e){const r=view.getBoundingClientRect();state.aimX=Math.min(1,Math.max(0,(e.clientX-r.left)/r.width));state.aimY=Math.min(1,Math.max(0,(e.clientY-r.top)/r.height))}
-view.addEventListener("pointerdown",e=>{if(!$("dialog").hidden)return;state.mouse=true;movePointer(e);view.setPointerCapture?.(e.pointerId);e.preventDefault()});view.addEventListener("pointermove",e=>{if(state.mouse)movePointer(e)});for(const event of ["pointerup","pointercancel","lostpointercapture"])view.addEventListener(event,()=>state.mouse=false);
+view.addEventListener("pointerdown",e=>{if(!$("dialog").hidden||videoBusy)return;state.mouse=true;movePointer(e);view.setPointerCapture?.(e.pointerId);e.preventDefault()});view.addEventListener("pointermove",e=>{if(state.mouse)movePointer(e)});for(const event of ["pointerup","pointercancel","lostpointercapture"])view.addEventListener(event,()=>state.mouse=false);
 view.addEventListener("wheel",e=>{e.preventDefault();state.d=Math.max(1,Math.min(140,state.d+Math.sign(e.deltaY)*3))},{passive:false});
-window.addEventListener("pagehide",()=>{held.clear();state.mouse=false});requestAnimationFrame(redraw);
+window.addEventListener("pagehide",()=>{held.clear();state.mouse=false;stopClip()});requestAnimationFrame(redraw);
 </script></body></html>
