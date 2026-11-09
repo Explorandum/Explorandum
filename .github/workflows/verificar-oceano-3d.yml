@@ -1,0 +1,55 @@
+name: EXPLORANDUM - test de navegacion 3D
+on:
+  push:
+    paths:
+      - 'oceano-inmersivo-3d.html'
+      - '.github/workflows/verificar-oceano-3d.yml'
+  workflow_dispatch:
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Instalar navegador de pruebas
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Comprobar oceanos 3D y controles
+        run: |
+          python3 -m http.server 8765 > /tmp/explorandum-qa-http.log 2>&1 &
+          node --input-type=module <<'NODE'
+          import { chromium } from 'playwright';
+          const browser = await chromium.launch({headless:true,args:['--enable-webgl','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader','--disable-web-security']});
+          const page = await browser.newPage({viewport:{width:1440,height:900}});
+          const errors=[];
+          page.on('pageerror',e=>errors.push('PAGEERROR '+e.message));
+          page.on('console',m=>{if(m.type()==='error')errors.push('CONSOLE '+m.text())});
+          await page.goto('http://127.0.0.1:8765/oceano-inmersivo-3d.html',{waitUntil:'domcontentloaded',timeout:30000});
+          await page.waitForSelector('#start:not([disabled])',{timeout:25000});
+          await page.locator('#start').click();
+          await page.waitForTimeout(6000);
+          const initial=await page.locator('#depth').innerText();
+          await page.keyboard.down('e');await page.waitForTimeout(800);await page.keyboard.up('e');
+          const after=await page.locator('#depth').innerText();
+          await page.locator('#book').click();
+          const cards=await page.locator('.fieldCard').count();
+          await page.locator('#bookClose').click();
+          await page.locator('#sonar').click();
+          console.log(JSON.stringify({initial,after,cards,errors},null,2));
+          await page.screenshot({path:'/tmp/explorandum-oceano3d.png',fullPage:false});
+          await browser.close();
+          if(cards<8)throw new Error('Faltan encuentros científicos en la guía');
+          if(initial===after)throw new Error('El control de profundidad no responde');
+          if(errors.some(x=>x.includes('PAGEERROR')||x.includes('WebGLProgram')))throw new Error('Errores graves de ejecución: '+errors.join(' | ').slice(0,1500));
+          NODE
+      - name: Captura QA
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: explorandum-oceano3d-qa
+          path: /tmp/explorandum-oceano3d.png
+          if-no-files-found: ignore
