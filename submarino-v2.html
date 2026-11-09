@@ -67,16 +67,52 @@ header{background:#041d2c;padding:11px 24px;display:flex;align-items:center;just
 #buttons #autopilot{border-color:#acd6cf;background:#144554}
 @media(max-width:780px){#encounter{top:132px;right:8px;width:115px;padding:5px}#encounter img{height:65px}#encounter strong{font-size:11px}#fieldbook{inset:5px 5px 130px;padding:14px}#fieldList{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.fieldItem{min-height:155px}.fieldItem img{height:80px}}
 
+
+/* CABINA: armazón y bóveda de observación */
+#porthole{border:clamp(19px,3.7vw,62px) solid transparent!important;border-radius:39% 39% 9% 9%/12% 12% 8% 8%!important;border-image:none!important;background:linear-gradient(135deg,#a2becb70 0%,#17384eaa 9%,#031422e0 25%,#4468798c 42%,#031521b9 72%,#a0bac977 100%) border-box!important;mask-image:none!important;box-shadow:inset 0 0 14px #d1faff77,inset 0 0 54px #00131f,0 0 0 2px #6c909dc7,0 10px 35px #0009!important}
+#porthole:before{content:"";position:absolute;inset:-12px;border:10px solid #0c283b91;border-radius:40% 40% 10% 10%/13% 13% 9% 9%;box-shadow:inset 0 0 12px #a2e1ed55,0 0 12px #0009}
+#porthole:after{opacity:.25!important;box-shadow:0 0 14px #001522b8!important}
+#frame-bolts{position:absolute;inset:0;z-index:5;pointer-events:none}
+.bolt{position:absolute;width:clamp(8px,1.2vw,17px);height:clamp(8px,1.2vw,17px);border-radius:50%;background:radial-gradient(circle at 35% 28%,#c8e0e8 4%,#6e9aac 28%,#193b4b 60%,#081723 77%);box-shadow:0 1px 4px #000b;border:1px solid #a6c5d155}
+.bolt:after{content:"";position:absolute;left:16%;right:16%;top:46%;height:1px;transform:rotate(-28deg);background:#102838}
+#glass-reflection{position:absolute;inset:0;z-index:4;pointer-events:none;opacity:.36;background:linear-gradient(130deg,transparent 0 12%,#e5faff12 20%,transparent 33% 72%,#adfaff0c 75%,transparent 82%);mix-blend-mode:screen}
+#console{position:absolute;left:0;right:0;bottom:0;height:clamp(110px,19vh,210px);z-index:4;pointer-events:none;background:linear-gradient(180deg,transparent 0%,#03172618 13%,#041727eb 42%,#071622fb 70%);border-top:2px solid #43677661;box-shadow:0 -10px 28px #02121d8c}
+#console:before{content:"";position:absolute;left:5%;right:5%;top:42%;height:2px;background:linear-gradient(90deg,transparent,#a8d6cf55,transparent)}
+#console .consoleLabel{position:absolute;left:24px;bottom:145px;font:700 10px system-ui;letter-spacing:.23em;color:#7cabb3}
+#console .led{position:absolute;bottom:100px;width:6px;height:6px;border-radius:50%;background:#7ef7cb;box-shadow:0 0 8px #5af7ca}
+#console .led:nth-of-type(2){left:11%}#console .led:nth-of-type(3){left:13%;background:#e5c16d;box-shadow:0 0 9px #e5c16d}
+#glass-frost{position:absolute;inset:0;z-index:2;pointer-events:none;background:radial-gradient(ellipse at 60% 42%,transparent 46%,#a9f4f40b 70%,#9cd9dc28 95%)}
+#videoSea{position:absolute;inset:-2%;width:104%;height:104%;object-fit:cover;opacity:0;transition:opacity 1.2s ease;pointer-events:none;z-index:1;filter:saturate(1.08) contrast(1.04);background:#031d29}
+#videoSea.on{opacity:1}
+#videoWording{position:absolute;left:50%;top:16%;transform:translateX(-50%);z-index:7;background:#031b2bbc;border:1px solid #94d9dc;border-radius:9px;padding:8px 13px;font-size:12px;letter-spacing:.1em;max-width:80%;text-align:center;display:none}
+#videoWording.on{display:block}
+#skipVideo{position:absolute;right:19px;bottom:185px;z-index:12;border:1px solid #d4f6f1;background:#073044dd;color:white;padding:9px 13px;border-radius:10px;display:none}
+#skipVideo.on{display:block}
+#specimenHero{background:radial-gradient(ellipse,#245466,#041a2b)!important;height:clamp(260px,43vh,480px)!important}
+#specimenHero img{object-fit:contain!important;object-position:center!important}
+#clipSection{padding:14px 0;border-top:1px solid #527789;margin:14px 0 8px;display:none}
+#clipSection.show{display:block}
+#clipSection strong{color:#aeffeb;display:block;margin-bottom:7px}
+#clipSection p{font-size:13px!important;color:#d6e9ef}
+#clipPlay{background:#1c6f7c!important;color:#fff!important;border:1px solid #b1eeea!important;padding:11px 15px!important}
+#clipPage{color:#b0f2eb!important;font-size:13px;margin-left:8px;display:inline-block}
+#fieldList .fieldItem img{object-fit:contain;background:#031925!important}
+#sea-life{position:absolute;inset:0;pointer-events:none;z-index:2;overflow:hidden}
+#sea-life i{position:absolute;display:block;opacity:0;animation:none}
+#sea-life i.active{opacity:1}
+#deck:fullscreen{width:100vw;height:100dvh;max-height:none;min-height:0}
+#deck:-webkit-full-screen{width:100vw;height:100vh;max-height:none;min-height:0}
+@media(max-width:780px){#porthole{border-width:15px!important}#console .consoleLabel{display:none}#videoWording{font-size:10px;top:20%;max-width:70%}#skipVideo{bottom:215px;right:9px}}
 </style></head><body>
 <header><span class="logo">EXPLORANDUM</span><nav><a href="capas.html">Cambiar capa</a><a href="submarino-cinematografico.html">Versión anterior</a></nav></header>
 <main>
 <section id="deck" aria-label="Pilotaje submarino cinematográfico a pantalla completa">
 <div id="view" aria-label="Mantén pulsado el ratón para pilotar hacia la dirección del cursor">
-<div class="bg" id="bg0"></div><div class="bg second" id="bg1"></div><div id="sunrays"></div><div id="depthfilter"></div><div id="headlight"></div>
+<div class="bg" id="bg0"></div><div class="bg second" id="bg1"></div><div id="sunrays"></div><div id="depthfilter"></div><video id="videoSea" muted playsinline preload="none" aria-label="Vídeo documental de fauna marina"></video><div id="headlight"></div><div id="glass-frost"></div><div id="sea-life"></div>
 <svg id="kelp" viewBox="0 0 1100 700" preserveAspectRatio="none" aria-hidden="true"><g id="plants"></g></svg>
 <svg id="animals" viewBox="0 0 1100 700" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="fishColor"><stop offset="0" stop-color="#abd5c4"/><stop offset=".6" stop-color="#527f88"/><stop offset="1" stop-color="#29435b"/></linearGradient></defs><g id="fish"></g></svg>
 <div id="silt"></div><div id="vignette"></div></div>
-<div id="porthole"></div><div id="reticle"></div>
+<div id="porthole"></div><div id="glass-reflection"></div><div id="frame-bolts"></div><div id="console"><span class="consoleLabel">EXPLORANDUM · INVESTIGACIÓN OCEÁNICA</span><i class="led" style="left:9%"></i><i class="led"></i><i class="led"></i></div><div id="reticle"></div><div id="videoWording" role="status"></div><button id="skipVideo" type="button">Continuar pilotando ✕</button>
 <div id="readouts"><span id="meter">PROFUNDIDAD 12 m</span><span id="atm">PRESIÓN ≈ 2,2 atm</span><span id="bearing">RUMBO 000°</span><span id="speed">VELOCIDAD 0</span><span id="progress">HALLAZGOS 0/5</span></div>
 <div id="minimap"><canvas id="mini" width="144" height="144"></canvas></div>
 <div id="zone"><h1 id="zoneName">Rocas y plataforma marina</h1><small id="zoneDesc">El paisaje comienza a desplegarse</small></div>
@@ -86,17 +122,18 @@ header{background:#041d2c;padding:11px 24px;display:flex;align-items:center;just
 <button id="signal" type="button">◎ Señal detectada · Investigar</button>
 <div id="dialog" hidden>
 <div id="specimenHero"><img id="specimenImg" alt=""><div class="photoNotice" id="specimenPlace"></div></div>
-<div id="specimenBody"><small id="specimenType">ENCUENTRO SUBMARINO</small><h2 id="discoveryTitle"></h2><span id="specimenLatin"></span><p id="discoveryText"></p><p id="discoveryDetail"></p><div id="observation"><strong>Observa en la fotografía</strong><span id="specimenObserve"></span></div><p><a id="source" href="#" target="_blank" rel="noopener">Fuente científica</a></p><div id="photoCredit"></div><button id="close">Seguir explorando</button></div></div>
+<div id="specimenBody"><small id="specimenType">ENCUENTRO SUBMARINO</small><h2 id="discoveryTitle"></h2><span id="specimenLatin"></span><p id="discoveryText"></p><p id="discoveryDetail"></p><div id="observation"><strong>Observa en la fotografía</strong><span id="specimenObserve"></span></div><p><a id="source" href="#" target="_blank" rel="noopener">Fuente científica</a></p><div id="photoCredit"></div><div id="clipSection"><strong>ENCUENTRO EN MOVIMIENTO · MICROVÍDEO REAL</strong><button id="clipPlay" type="button">▶ Observar 10 segundos</button><a id="clipPage" target="_blank" rel="noopener">Ver vídeo original y licencia</a><p id="clipInfo"></p></div><button id="close">Seguir explorando</button></div></div>
 <div id="controls"><div id="message">Mantén pulsado «Avanzar» o el ratón sobre el paisaje. Busca las señales del sonar.</div><div id="buttons">
-<button class="primary" data-hold="w">▲ Avanzar</button><button data-hold="s">▼ Atrás</button><button data-hold="a">◀ Girar</button><button data-hold="d">Girar ▶</button><button data-hold="q">↑ Subir</button><button data-hold="e">↓ Bajar</button><button id="sonar">◎ Sonar</button><button id="fieldOpen" type="button">◉ Ver fauna y flora</button><button id="autopilot" type="button">↗ Ir a próxima señal</button><button id="light">☀ Focos</button><button id="find" disabled>Investigar</button><button id="full">⛶ Pantalla completa</button>
+<button class="primary" data-hold="w">▲ Avanzar</button><button data-hold="s">▼ Atrás</button><button data-hold="a">◀ Girar</button><button data-hold="d">Girar ▶</button><button data-hold="q">↑ Subir</button><button data-hold="e">↓ Bajar</button><button id="sonar">◎ Sonar</button><button id="fieldOpen" type="button">◉ Enciclopedia marina</button><button id="autopilot" type="button">↗ Ir a próxima señal</button><button id="light">☀ Focos</button><button id="find" disabled>Investigar</button><button id="full">⛶ Pantalla completa</button>
 </div><div id="help">Teclado: W/A/S/D para moverte; Q/E para cambiar profundidad. Ratón: mantén pulsado y dirige con el cursor. Rueda: subir o bajar.</div></div>
 </section>
 <footer id="credits">Simulación visual interactiva. Las fotografías y elementos superpuestos son ilustrativos: no constituyen una recreación georreferenciada ni identificación de especies del mar de Cortés.
-Fotografías submarinas y encuentros: Diego Delso (CC BY-SA 4.0), Dimitar Nikolov Berov (CC BY-SA 4.0), y las imágenes de ambiente vinculadas abajo. Los créditos y las licencias de cada espécimen se muestran en su ficha. Fotografías de ambiente: <a href="https://unsplash.com/photos/an-underwater-view-of-a-coral-reef-and-seaweed-bHZNo7-lNLs" target="_blank" rel="noopener">Julius Hildebrandt</a> · <a href="https://unsplash.com/photos/green-plant-under-water-during-daytime-UHPq2Lh2QxU" target="_blank" rel="noopener">Benjamin L. Jones</a> · <a href="https://unsplash.com/photos/an-underwater-view-of-a-coral-reef-with-fish-1VcAWoNIERs" target="_blank" rel="noopener">Francesco Ungaro</a>. Encuentros educativos basados en información general de NOAA Ocean Service.</footer>
+Los clips cortos proceden de Wikimedia Commons: su localización real figura en cada encuentro, y no se presentan como grabaciones hechas en el mar de Cortés. Fotografías submarinas y encuentros: Diego Delso (CC BY-SA 4.0), Dimitar Nikolov Berov (CC BY-SA 4.0), y las imágenes de ambiente vinculadas abajo. Los créditos y las licencias de cada espécimen se muestran en su ficha. Fotografías de ambiente: <a href="https://unsplash.com/photos/an-underwater-view-of-a-coral-reef-and-seaweed-bHZNo7-lNLs" target="_blank" rel="noopener">Julius Hildebrandt</a> · <a href="https://unsplash.com/photos/green-plant-under-water-during-daytime-UHPq2Lh2QxU" target="_blank" rel="noopener">Benjamin L. Jones</a> · <a href="https://unsplash.com/photos/an-underwater-view-of-a-coral-reef-with-fish-1VcAWoNIERs" target="_blank" rel="noopener">Francesco Ungaro</a>. Encuentros educativos basados en información general de NOAA Ocean Service.</footer>
 </main>
 <script>
 "use strict";
 const $=id=>document.getElementById(id), deck=$("deck"), view=$("view"), controls=$("controls");
+const bolts=$("frame-bolts");[["4%","18%"],["9%","7%"],["23%","4%"],["45%","3%"],["67%","4%"],["87%","7%"],["95%","18%"],["3%","45%"],["96%","45%"],["4%","72%"],["96%","72%"],["13%","90%"],["87%","90%"]].forEach(([left,top])=>{let b=document.createElement('i');b.className='bolt';b.style.left=left;b.style.top=top;bolts.append(b)});
 const photos=["https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Pez_%C3%A1ngel_de_Cortez_(Pomacanthus_zonipectus)%2C_La_Paz%2C_Baja_California%2C_M%C3%A9xico%2C_2024-12-20%2C_DD_79.jpg/960px-Pez_%C3%A1ngel_de_Cortez_(Pomacanthus_zonipectus)%2C_La_Paz%2C_Baja_California%2C_M%C3%A9xico%2C_2024-12-20%2C_DD_79.jpg","https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Zostera_marina_2.jpg/960px-Zostera_marina_2.jpg","https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Lobo_marino_(Zalophus_californianus)%2C_La_Paz%2C_Baja_California%2C_M%C3%A9xico%2C_2024-12-20%2C_DD_60.jpg/960px-Lobo_marino_(Zalophus_californianus)%2C_La_Paz%2C_Baja_California%2C_M%C3%A9xico%2C_2024-12-20%2C_DD_60.jpg","https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Coral_(Pocillopora_verrucosa)%2C_Cabo_Pulmo%2C_Baja_California%2C_M%C3%A9xico%2C_2024-12-19%2C_DD_29.jpg/960px-Coral_(Pocillopora_verrucosa)%2C_Cabo_Pulmo%2C_Baja_California%2C_M%C3%A9xico%2C_2024-12-19%2C_DD_29.jpg","photo-1646491092836-75a13d9a6e31","https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Tibur%C3%B3n_ballena_(Rhincodon_typus)%2C_La_Paz%2C_Baja_California%2C_M%C3%A9xico%2C_2024-12-20%2C_DD_04.jpg/960px-Tibur%C3%B3n_ballena_(Rhincodon_typus)%2C_La_Paz%2C_Baja_California%2C_M%C3%A9xico%2C_2024-12-20%2C_DD_04.jpg"];
 const verifiedImages=[{"file":"Pez ángel de Cortez (Pomacanthus zonipectus), La Paz, Baja California, México, 2024-12-20, DD 79.jpg","url":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Pez_%C3%A1ngel_de_Cortez_(Pomacanthus_zonipectus)%2C_La_Paz%2C_Baja_California%2C_M%C3%A9xico%2C_2024-12-20%2C_DD_79.jpg/960px-Pez_%C3%A1ngel_de_Cortez_(Pomacanthus_zonipectus)%2C_La_Paz%2C_Baja_California%2C_M%C3%A9xico%2C_2024-12-20%2C_DD_79.jpg"},{"file":"Zostera marina 2.jpg","url":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Zostera_marina_2.jpg/960px-Zostera_marina_2.jpg"},{"file":"Lobo marino (Zalophus californianus), La Paz, Baja California, México, 2024-12-20, DD 60.jpg","url":"https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Lobo_marino_(Zalophus_californianus)%2C_La_Paz%2C_Baja_California%2C_M%C3%A9xico%2C_2024-12-20%2C_DD_60.jpg/960px-Lobo_marino_(Zalophus_californianus)%2C_La_Paz%2C_Baja_California%2C_M%C3%A9xico%2C_2024-12-20%2C_DD_60.jpg"},{"file":"Coral (Pocillopora verrucosa), Cabo Pulmo, Baja California, México, 2024-12-19, DD 29.jpg","url":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Coral_(Pocillopora_verrucosa)%2C_Cabo_Pulmo%2C_Baja_California%2C_M%C3%A9xico%2C_2024-12-19%2C_DD_29.jpg/960px-Coral_(Pocillopora_verrucosa)%2C_Cabo_Pulmo%2C_Baja_California%2C_M%C3%A9xico%2C_2024-12-19%2C_DD_29.jpg"}];
 const zones=[
