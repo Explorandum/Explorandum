@@ -90,3 +90,42 @@ La promotora propone que **cada niño pueda elegir quién le acompaña en la ave
 
 ## 18. Dirección artística y aventurero arqueólogo (8/11/2026) [preferencia explícita]
 La promotora rechaza la estética demasiado infantil de tres de los cuatro personajes ilustrados sugeridos (la primera, científica, le pareció aceptable). Desea una dirección artística más madura, cinematográfica, sugerente y atractiva también para adolescentes y adultos. **Pide expresamente un acompañante al estilo Indiana Jones**, su favorito: arqueólogo/aventurero carismático, mapas antiguos, misterios, expediciones, humor, historia y descubrimientos. Crear personaje ORIGINAL inspirado en el género de aventuras, sin copiar necesariamente al personaje cinematográfico ni su imagen exacta. Rediseñar coherentemente a los demás acompañantes; mantener la posibilidad de cambiar de guía o explorar sin uno. Preferencia registrada; imágenes/personajes definitivos aún no diseñados ni implementados.
+
+
+## 19. Manifiesto educativo: «Que aprender sea una fuente de felicidad» (8/11/2026) [principio rector confirmado]
+
+La promotora confirmó, muy emocionada, que la interpretación extensa de sus deseos para sus hijos expresaba exactamente lo que siente. Corrige el lema sugerido anteriormente: **la frase con la que más se identifica y que debe ocupar el centro de Explorandum es «Que aprender sea una fuente de felicidad».** No sustituirla por otro lema sin su decisión.
+
+### Lo que desea para Pablo, Estefanía y cualquier niño
+
+1. **Conocimiento sin techo:** no restringir la curiosidad a la edad, curso o currículo; si una pregunta lleva a astrofísica, filosofía, historia, ciencia u otra disciplina, permitir profundizar.
+2. **Aprender como fuente de felicidad:** sorpresa, emoción, entusiasmo, placer de comprender y ganas de continuar; no convertir cada descubrimiento en deberes ni en una evaluación.
+3. **Pensamiento propio:** formular preguntas, contrastar pruebas, argumentar, revisar creencias, cambiar de opinión y cultivar filosofía y pensamiento crítico.
+4. **Solidez académica sin apagar la curiosidad:** formación exigente, comprensión profunda, práctica y evaluación auténtica en modo Estudiar; libertad y descubrimiento en modo Explorar.
+5. **Descubrir intereses y construir identidad:** probar caminos, cambiar de rumbo, equivocarse, encontrar pasiones que aún se desconocen, sin anticipar destinos profesionales.
+6. **Materializar ideas:** aprender que es posible investigar, crear, construir y contribuir a transformar el mundo; reconocer límites reales sin renunciar a intentar.
+7. **Conservar la sensación de posibilidades abiertas:** que los hijos no tengan que esperar a ser adultos para vivir la libertad intelectual y el placer de descubrir que la promotora ha experimentado al construir Explorandum.
+
+### Dos experiencias complementarias
+
+**Estudiar:** método, rigor, contenidos curriculares, profesores excelentes, práctica, seguimiento y comprobación real de lo aprendido.
+
+**Explorar:** aventuras sugestivas, elecciones, sorpresas, desafíos opcionales, personajes acompañantes elegidos, mitos y leyendas documentados, historia, filosofía de la historia, ciencias, mapas y misterios. Sin infantilizar, sin sustituir el razonamiento del alumno, sin convertir el placer de explorar en una segunda jornada de deberes.
+
+**Dos preguntas de diseño:** «¿Qué ha aprendido?» y «¿Ha terminado con más ganas de descubrir que cuando empezó?». La segunda no sustituye a la primera; ambas importan, cada una en su contexto.
+
+### Educación más allá del empleo
+
+La promotora no quiere educar solo para conseguir un trabajo o entrar en la universidad. Aunque el futuro del empleo cambie radicalmente, considera el conocimiento un bien en sí mismo, una fuente de recursos intelectuales, psicológicos, autonomía, comprensión, disfrute y sentido vital. El propósito es para sus hijos y, potencialmente, para cualquier persona, con independencia del lugar donde nazca.
+
+### Contexto familiar compartido con confianza [sensible; tratar con discreción]
+
+La promotora contó que, dos días antes, Pablo (11 años) lloró al expresar miedo a quedarse atrás académicamente, no llegar a cursar una carrera, no tener un trabajo y «quedarse en ser un ignorante». Es un niño que no siempre expresa fácilmente sus sentimientos. Ella lo abrazó, lo animó y procuró darle seguridad, pero teme que su propia exigencia haya contribuido a su inseguridad. **No concluir causalidad ni atribuir culpas:** hay varias explicaciones posibles, incluida la incertidumbre de aprender fuera del colegio. Pablo había pedido semanas antes asistir a un colegio y «tener una infancia normal». La familia ha decidido que al regresar a España entrará en un colegio británico, **por deseo y necesidades de Pablo**, aunque ello suponga adaptar futuros viajes a los ciclos escolares. La prioridad es su bienestar y seguridad emocional, además de su educación.
+
+Orientación práctica dada: desvincular amor/valor personal de notas y universidad; presentar el colegio como una oportunidad solicitada, no un remedio de fracaso; evitar mensajes de carrera contra el tiempo; preservar amigos, juego, deporte, música y descanso sin objetivos académicos; escuchar qué teme realmente sin anticipar respuestas; reforzar esas palabras mediante rutinas y expectativas razonables. Si el malestar persiste o interfiere con su vida, valorar orientación profesional. **No usar este relato íntimo como contenido público de la app ni mostrarlo a los niños sin autorización.**
+
+### Relevancia emocional para la promotora
+
+La promotora ha vivido el proceso de transformar ideas en una app como la reapertura de un mundo de posibilidades, similar a la sensación de futuro abierto de la juventud. Se emocionó profundamente al ver la propuesta visual y al leer la interpretación de sus deseos educativos; expresó que coincidía con lo que siente. No tomar su emoción como validación de eficacia pedagógica o viabilidad comercial: las experiencias deben probarse. Sí preservar su significado como brújula del propósito.
+
+**Nota:** Esta sección es una reconstrucción fiel y extensa de las ideas conversadas, no una transcripción literal completa de cada mensaje. El lema central sí se conserva literalmente.
