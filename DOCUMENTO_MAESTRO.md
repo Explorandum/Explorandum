@@ -1,5 +1,6 @@
 # EXPLORANDUM — Documento maestro de visión y decisiones
 **Origen de la visión:** 8 de noviembre de 2026, 20:00 h, Cabo San Lucas, Baja California Sur, México.
+**Ubicación concreta comunicada posteriormente:** junto a Cinépolis Los Cabos y Soriana Híper, en el Carl’s Jr. de esa zona, Cabo San Lucas, Baja California Sur, México. **Coordenadas GPS exactas: pendientes de confirmar**; no se han deducido ni inventado a partir de los establecimientos.
 **Lema:** Descubrir. Comprender. Estudiar.
 **Frase de propósito:** «Que el lugar donde nace un niño no determine hasta dónde puede llegar».
 **Estado:** documento vivo. Diferenciar visión, decisiones, hipótesis y funciones ya implementadas.
