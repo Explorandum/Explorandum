@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>EXPLORANDUM · Expedición submarina cinematográfica</title>
+<style>
+:root{color-scheme:dark;--mint:#a9f5e6}*{box-sizing:border-box}html,body{margin:0;background:#03101b;color:#e6f7fa;font:15px/1.4 system-ui,-apple-system,sans-serif}button{font:inherit;cursor:pointer}a{color:#b0e9f2}button:focus-visible,a:focus-visible{outline:3px solid #b9f6f0;outline-offset:2px}
+header{background:#041d2c;padding:11px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}.logo{font:bold 21px Georgia,serif;letter-spacing:.14em}header nav{display:flex;gap:17px;flex-wrap:wrap}header a{font-size:13px;text-decoration:none}
+#deck{position:relative;height:calc(100dvh - 51px);min-height:540px;background:#0b4960;overflow:hidden;isolation:isolate;touch-action:none;user-select:none}
+#view{position:absolute;inset:0;overflow:hidden;touch-action:none;cursor:crosshair}
+.bg{position:absolute;inset:-7%;background-color:#13536a;background-position:center;background-size:cover;filter:saturate(1.1);will-change:transform,opacity;transition:opacity 2s ease,filter 1.5s ease}.bg.second{opacity:0}.bg.loaded{background-color:#082e42}
+#depthfilter{position:absolute;inset:0;pointer-events:none;background:#031c31;opacity:0;transition:opacity .8s}
+#sunrays{position:absolute;inset:0;pointer-events:none;background:repeating-conic-gradient(from 60deg at 27% -20%,transparent 0deg 5deg,#cbfff11d 6deg 8deg,transparent 9deg 17deg);mask-image:linear-gradient(#000,transparent 90%);opacity:.75}
+#headlight{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at var(--light-x,50%) var(--light-y,46%),#d7fff522 0%,#a6f9e314 14%,transparent 55%);mix-blend-mode:screen;opacity:.95}
+#kelp,#animals{position:absolute;inset:0;pointer-events:none;width:100%;height:100%;overflow:visible}#kelp{opacity:.7}#animals{opacity:.9}
+#silt{position:absolute;inset:0;pointer-events:none;overflow:hidden}#silt i{display:block;position:absolute;width:2.5px;height:2.5px;left:var(--x);top:var(--y);border-radius:50%;background:#d8fdf4ba;opacity:.4;animation:float var(--duration) linear infinite;animation-delay:var(--delay)}@keyframes float{to{transform:translate(-75px,-115px);opacity:0}}
+#vignette{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 12%,#00122161 80%,#000c18bf 100%)}
+#porthole{position:absolute;inset:0;z-index:3;border:clamp(10px,2.3vw,30px) solid #041b2ab5;border-radius:33% 33% 4% 4%/9% 9% 3% 3%;pointer-events:none;box-shadow:inset 0 0 50px #0009}#porthole:after{content:"";position:absolute;top:-10px;bottom:-8px;left:49.35%;width:clamp(7px,1.6vw,21px);background:linear-gradient(90deg,#041c2a,#547681,#071b27);opacity:.62;box-shadow:0 0 12px #00121ac9}
+#reticle{position:absolute;left:50%;top:43%;width:40px;height:40px;border:1px solid #d8fff1a5;border-radius:50%;transform:translate(-50%,-50%);z-index:4;pointer-events:none}
+#reticle:after{content:"+";font-size:21px;position:absolute;left:13px;top:5px;color:#d8fff1b0}
+#readouts{position:absolute;z-index:6;top:16px;left:18px;right:178px;display:flex;gap:7px;flex-wrap:wrap;pointer-events:none}
+#readouts span{padding:7px 10px;border-radius:7px;background:#021a2cdd;border:1px solid #7cbbc5;font-size:12px;letter-spacing:.05em;font-weight:800}
+#minimap{position:absolute;right:18px;top:17px;width:144px;height:144px;z-index:6;background:#031c2cdb;border:1px solid #97c9d2;border-radius:12px;box-shadow:0 6px 28px #0009}#mini{width:100%;height:100%}
+#zone{position:absolute;left:22px;bottom:158px;max-width:370px;text-shadow:0 3px 10px #000c;pointer-events:none;z-index:5}#zone h1{font:clamp(18px,2.7vw,34px) Georgia,serif;margin:0}#zone small{color:#ddf1f0}
+#notice{position:absolute;top:23%;left:50%;transform:translateX(-50%);z-index:8;max-width:min(500px,85%);background:#031b2ae8;border:1px solid #a1f6ea;border-radius:12px;padding:13px 18px;text-align:center;opacity:0;transition:opacity .35s;pointer-events:none}#notice.visible{opacity:1}
+#signal{position:absolute;z-index:7;top:44%;left:57%;display:none;border:2px solid #b2ffde;background:#032839d9;color:white;padding:8px 12px;border-radius:12px;box-shadow:0 0 35px #b6ffe777}#signal.show{display:block}
+#dialog{position:absolute;z-index:13;top:50%;left:50%;transform:translate(-50%,-50%);width:min(520px,90vw);max-height:75%;overflow:auto;background:#031929f5;border:1px solid #acede3;border-radius:16px;padding:25px;box-shadow:0 15px 90px #000d}#dialog[hidden]{display:none}#dialog h2{font:31px Georgia,serif;margin:4px 0}#dialog p{font-size:16px;color:#d4e9f0}#dialog button{background:#a8f2e6;color:#04313a;font-weight:800;border:0;border-radius:9px;padding:10px 15px}
+#controls{position:absolute;z-index:10;bottom:0;left:0;right:0;display:flex;flex-direction:column;gap:7px;padding:11px 15px max(15px,env(safe-area-inset-bottom));background:linear-gradient(transparent,#031623ec 25%,#02121dee)}
+#message{min-height:21px;text-align:center;color:#defaf4;text-shadow:0 2px 7px #000b}#buttons{display:flex;justify-content:center;gap:6px;flex-wrap:wrap}
+#buttons button{background:#093c52e8;border:1px solid #8ad6da;color:#efffff;border-radius:8px;padding:10px 13px;min-height:42px;font-weight:750;touch-action:none}#buttons button:active{background:#a5ecdd;color:#093646}#buttons button.primary{background:#b2f3e6;color:#073241}#buttons button:disabled{opacity:.48}#buttons button#find{background:#3b7b64;border-color:#b7f6d9}
+#help{font-size:12px;text-align:center;color:#aed2da}
+#credits{font-size:13px;background:#061e2b;padding:18px 24px;color:#bed2da}#credits a{margin-right:12px}
+@media(max-width:780px){#deck{height:calc(100dvh - 48px);min-height:620px}#readouts{right:115px;left:10px;top:11px;gap:4px}#readouts span{font-size:10px;padding:5px}#minimap{top:10px;right:8px;width:101px;height:108px}#buttons button{font-size:12px;padding:7px 9px;min-height:39px}#controls{padding:7px 6px max(8px,env(safe-area-inset-bottom))}#message{font-size:12px}#zone{bottom:190px;left:13px;max-width:220px}}
+@media(max-height:620px){#zone{display:none}#help{display:none}#buttons button{padding:5px 9px;min-height:33px}#controls{padding-top:4px;padding-bottom:4px}}
+@media(prefers-reduced-motion:reduce){#silt i{animation:none}.bg{transition:none}}
+</style></head><body>
+<header><span class="logo">EXPLORANDUM</span><nav><a href="capas.html">Cambiar capa</a><a href="submarino-cinematografico.html">Versión anterior</a></nav></header>
+<main>
+<section id="deck" aria-label="Pilotaje submarino cinematográfico a pantalla completa">
+<div id="view" aria-label="Mantén pulsado el ratón para pilotar hacia la dirección del cursor">
+<div class="bg" id="bg0"></div><div class="bg second" id="bg1"></div><div id="sunrays"></div><div id="depthfilter"></div><div id="headlight"></div>
+<svg id="kelp" viewBox="0 0 1100 700" preserveAspectRatio="none" aria-hidden="true"><g id="plants"></g></svg>
+<svg id="animals" viewBox="0 0 1100 700" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="fishColor"><stop offset="0" stop-color="#abd5c4"/><stop offset=".6" stop-color="#527f88"/><stop offset="1" stop-color="#29435b"/></linearGradient></defs><g id="fish"></g></svg>
+<div id="silt"></div><div id="vignette"></div></div>
+<div id="porthole"></div><div id="reticle"></div>
+<div id="readouts"><span id="meter">PROFUNDIDAD 12 m</span><span id="atm">PRESIÓN ≈ 2,2 atm</span><span id="bearing">RUMBO 000°</span><span id="speed">VELOCIDAD 0</span><span id="progress">HALLAZGOS 0/5</span></div>
+<div id="minimap"><canvas id="mini" width="144" height="144"></canvas></div>
+<div id="zone"><h1 id="zoneName">Rocas y plataforma marina</h1><small id="zoneDesc">El paisaje comienza a desplegarse</small></div>
+<div id="notice" role="status" aria-live="polite"></div>
+<button id="signal" type="button">◎ Señal detectada · Investigar</button>
+<div id="dialog" hidden><small>DIARIO CIENTÍFICO · DESCUBRIMIENTO</small><h2 id="discoveryTitle"></h2><p id="discoveryText"></p><p id="discoveryDetail"></p><p><a id="source" href="#" target="_blank" rel="noopener">Consultar fuente científica</a></p><button id="close">Continuar expedición</button></div>
+<div id="controls"><div id="message">Mantén pulsado «Avanzar» o el ratón sobre el paisaje. Busca las señales del sonar.</div><div id="buttons">
+<button class="primary" data-hold="w">▲ Avanzar</button><button data-hold="s">▼ Atrás</button><button data-hold="a">◀ Girar</button><button data-hold="d">Girar ▶</button><button data-hold="q">↑ Subir</button><button data-hold="e">↓ Bajar</button><button id="sonar">◎ Sonar</button><button id="light">☀ Focos</button><button id="find" disabled>Investigar</button><button id="full">⛶ Pantalla completa</button>
+</div><div id="help">Teclado: W/A/S/D para moverte; Q/E para cambiar profundidad. Ratón: mantén pulsado y dirige con el cursor. Rueda: subir o bajar.</div></div>
+</section>
+<footer id="credits">Simulación visual interactiva. Las fotografías y elementos superpuestos son ilustrativos: no constituyen una recreación georreferenciada ni identificación de especies del mar de Cortés.
+Fotografías submarinas: <a href="https://unsplash.com/photos/an-underwater-view-of-a-coral-reef-and-seaweed-bHZNo7-lNLs" target="_blank" rel="noopener">Julius Hildebrandt</a> · <a href="https://unsplash.com/photos/green-plant-under-water-during-daytime-UHPq2Lh2QxU" target="_blank" rel="noopener">Benjamin L. Jones</a> · <a href="https://unsplash.com/photos/an-underwater-view-of-a-coral-reef-with-fish-1VcAWoNIERs" target="_blank" rel="noopener">Francesco Ungaro</a>. Encuentros educativos basados en información general de NOAA Ocean Service.</footer>
+</main>
+<script>
+"use strict";
+const $=id=>document.getElementById(id), deck=$("deck"), view=$("view"), controls=$("controls");
+const photos=[
+"photo-1592810340148-829d34c0887a",
+"photo-1629215833350-8ddcec7e1153",
+"photo-1733413379112-7f769e6ee7ba",
+"photo-1733413379119-68920fd0eac1",
+"photo-1646491092836-75a13d9a6e31",
+"photo-1516231845232-0cbd957d3594"];
+const zones=[
+["Rocas y sedimentos","Las capas y el relieve guardan pistas geológicas",10,43],
+["Praderas submarinas","Pastos marinos, plantas con flores adaptadas al agua",3,30],
+["Bancos de peces","Una comunidad en movimiento",12,52],
+["Comunidades del arrecife","Corales, esponjas y otros habitantes del fondo",17,68],
+["Laderas submarinas","Disminuye la luz natural, aumenta la presión",50,130],
+["Columna de agua","La vida continúa moviéndose sobre las profundidades",15,95]];
+const finds=[
+{x:0,z:50,d:22,name:"La historia de las rocas",text:"Los afloramientos y sedimentos pueden conservar señales de procesos geológicos que transformaron el fondo. El aspecto no basta para fechar una roca.",detail:"Los geólogos estudian relaciones entre capas y, cuando procede, emplean dataciones y otras evidencias. Un fondo marino no es una superficie uniforme.",url:"https://oceanservice.noaa.gov/facts/oceanfloor.html"},
+{x:-14,z:133,d:16,name:"Pastos que viven bajo el agua",text:"Los pastos marinos son plantas con flores, no algas. Captan luz solar y ofrecen refugio y alimento a muchos organismos.",detail:"La profundidad y la transparencia del agua influyen en su distribución. No todos los tramos costeros tienen praderas.",url:"https://oceanservice.noaa.gov/facts/seagrass.html"},
+{x:17,z:210,d:35,name:"Un banco de peces",text:"Los peces pueden agruparse formando bancos que se mueven de manera coordinada. El fenómeno tiene ventajas y funciones que dependen de la especie.",detail:"Para identificar la especie hay que observar rasgos y contexto; la imagen del fondo es ilustrativa.",url:"https://oceanservice.noaa.gov/facts/fish-school.html"},
+{x:-12,z:295,d:48,name:"Animales constructores",text:"Los corales son animales. Junto a otros organismos bentónicos pueden formar comunidades de gran complejidad.",detail:"En esta escena los organismos no son un inventario de especies locales. La presencia real depende del tipo de fondo, la temperatura y la profundidad.",url:"https://oceanservice.noaa.gov/facts/coral.html"},
+{x:12,z:390,d:93,name:"Luz y presión en profundidad",text:"La presión aumenta con la profundidad. Aproximadamente, diez metros adicionales de agua aportan una atmósfera más de presión.",detail:"La luz también se atenúa y cambia de color. La profundidad de esta expedición se simula y no equivale a una carta batimétrica real.",url:"https://oceanservice.noaa.gov/facts/pressure.html"}];
+const state={x:0,z:0,d:12,heading:0,lights:true,photo:0,discover:new Set(),aimX:.5,aimY:.45,mouse:false};
+let held=new Set(),last=performance.now(),noteTimer=0,near=-1,preloaded=new Map(),fallbackImages=["photo-1546026423-cc4642628d2b","photo-1583212292454-1fe6229603b7","photo-1559827260-dc66d52bef19"];
+let companion=new URLSearchParams(location.search).get("personaje")||"Aki";try{if(!new URLSearchParams(location.search).has("personaje"))companion=localStorage.getItem("explorandum-companion")||"Aki";JSON.parse(localStorage.getItem("explorandum-cinema-v2-found")||"[]").forEach(i=>state.discover.add(i))}catch(e){}
+const source=id=>"https://images.unsplash.com/"+id+"?auto=format&fit=crop&w=1800&q=82";
+function assignPhoto(id,element,attempt=0){let url=source(id);const img=new Image();img.onload=()=>{element.style.backgroundImage='url("'+url+'")';};img.onerror=()=>{if(attempt<fallbackImages.length)assignPhoto(fallbackImages[attempt],element,attempt+1);else element.style.backgroundImage="linear-gradient(130deg,#0e5867,#082c49 52%,#061421)"};img.src=url}
+assignPhoto(photos[0],$("bg0"));
+let backdrop=0,frame=0;
+function setPhoto(i){if(state.photo===i)return;state.photo=i;const old=backdrop===0?$("bg0"):$("bg1"),neu=backdrop===0?$("bg1"):$("bg0");neu.style.opacity=0;assignPhoto(photos[i],neu);setTimeout(()=>{neu.style.opacity=1;old.style.opacity=0},35);backdrop=1-backdrop;notify(zones[i][0])}
+const NS="http://www.w3.org/2000/svg";let seed=96;function rnd(){seed=(seed*1664525+1013904223)>>>0;return seed/4294967296}
+const fishLayer=$("fish"),plantsLayer=$("plants"),fish=[],weeds=[];
+for(let i=0;i<24;i++){const g=document.createElementNS(NS,"g");const body=document.createElementNS(NS,"ellipse");body.setAttribute("rx",15);body.setAttribute("ry",6);body.setAttribute("fill","url(#fishColor)");g.append(body);const tail=document.createElementNS(NS,"path");tail.setAttribute("d","M12 -2 L24 -10 L21 0 L24 10 L12 2");tail.setAttribute("fill","#42657a");g.append(tail);const eye=document.createElementNS(NS,"circle");eye.setAttribute("cx",-9);eye.setAttribute("cy",-1);eye.setAttribute("r",1.2);eye.setAttribute("fill","#d9f5eb");g.append(eye);fishLayer.append(g);fish.push({g,x:rnd()*1350-100,y:80+rnd()*450,size:.4+rnd()*1.7,speed:11+rnd()*25,phase:rnd()*6.28})}
+for(let i=0;i<22;i++){const g=document.createElementNS(NS,"g");for(let k=0;k<4;k++){const p=document.createElementNS(NS,"path");const h=45+rnd()*140;p.setAttribute("d","M0 0 Q"+((k-2)*21)+" "+(-h*.6)+" "+((k-2)*22)+" "+(-h));p.setAttribute("fill","none");p.setAttribute("stroke",["#317f62","#4a9972","#629c74","#296e5a"][k]);p.setAttribute("stroke-width",3+rnd()*6);p.setAttribute("stroke-linecap","round");g.append(p)}plantsLayer.append(g);weeds.push({g,x:i*58-20,scale:.6+rnd()*.8,phase:rnd()*6.28})}
+for(let i=0;i<70;i++){const p=document.createElement("i");p.style.setProperty("--x",(rnd()*100)+"%");p.style.setProperty("--y",(rnd()*100)+"%");p.style.setProperty("--duration",(7+rnd()*14)+"s");p.style.setProperty("--delay",(-rnd()*16)+"s");$("silt").append(p)}
+function notify(txt){const n=$("notice");n.textContent=txt;n.classList.add("visible");clearTimeout(noteTimer);noteTimer=setTimeout(()=>n.classList.remove("visible"),3200)}
+function findNear(){let best=-1,min=Infinity;finds.forEach((p,i)=>{const d=Math.hypot((state.z-p.z), (state.x-p.x)*1.6);if(d<min){min=d;best=i}});return min<24?best:-1}
+const m=$("mini"),ctx=m.getContext("2d");function drawMap(){ctx.clearRect(0,0,144,144);ctx.fillStyle="#052f3c";ctx.fillRect(0,0,144,144);ctx.strokeStyle="#7fa5ab66";ctx.setLineDash([3,6]);for(let a=20;a<144;a+=26){ctx.beginPath();ctx.moveTo(0,a);ctx.lineTo(144,a);ctx.stroke()}ctx.setLineDash([]);ctx.strokeStyle="#69c3c8";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(72,136);ctx.lineTo(72,8);ctx.stroke();finds.forEach((p,i)=>{const xx=72+p.x*.38,yy=136-p.z*.28;ctx.fillStyle=state.discover.has(i)?"#a8efc9":"#ffc985";ctx.beginPath();ctx.arc(xx,yy,4,0,7);ctx.fill()});const px=72+state.x*.38,py=136-state.z*.28;ctx.save();ctx.translate(px,py);ctx.rotate(state.heading);ctx.fillStyle="#bdfdf3";ctx.beginPath();ctx.moveTo(0,-9);ctx.lineTo(-6,8);ctx.lineTo(6,8);ctx.closePath();ctx.fill();ctx.restore();ctx.font="10px system-ui";ctx.fillStyle="#d0e6eb";ctx.fillText("MAPA DE MISIÓN",10,13)}
+function redraw(now){const dt=Math.min(.05,(now-last)/1000);last=now;frame++;
+let go=held.has("w")?1:held.has("s")?-1:0;
+let turn=(held.has("d")?1:0)-(held.has("a")?1:0),vertical=(held.has("e")?1:0)-(held.has("q")?1:0);
+if(state.mouse){go=1;turn+=(state.aimX-.5)*1.3;vertical+=(state.aimY-.45)*.8}
+state.heading+=turn*dt*.55;state.x+=Math.sin(state.heading)*go*dt*16;state.z+=Math.cos(state.heading)*go*dt*16;
+state.x=Math.max(-55,Math.min(55,state.x));state.z=Math.max(0,Math.min(499,state.z));state.d=Math.max(1,Math.min(140,state.d+vertical*dt*17));
+const index=Math.min(5,Math.floor(state.z/83));if(index!==state.photo)setPhoto(index);
+const light=Math.exp(-state.d/47);
+const displacement=Math.sin(state.heading)*10;
+const bg=$("bg0"),bg1=$("bg1");
+for(const b of [bg,bg1]){b.style.transform="scale("+(1.15+Math.sin(now/3700)*.018+(state.z%83)/800)+") translate("+(displacement-(state.x*.14))+"%,"+((state.d-12)*-.095)+"%)";b.style.filter="brightness("+(0.45+light*.65)+") saturate("+(0.78+light*.38)+")"}
+$("depthfilter").style.opacity=Math.min(.76,Math.max(0,(state.d-20)/125)*.85);
+$("sunrays").style.opacity=Math.max(0,.85-state.d/110);
+$("headlight").style.opacity=state.lights?1:0;
+$("headlight").style.setProperty("--light-x",(50+state.aimX*18-9)+"%");
+$("headlight").style.setProperty("--light-y",(34+state.aimY*12)+"%");
+$("reticle").style.left=(state.mouse?state.aimX*100:50)+"%";$("reticle").style.top=(state.mouse?state.aimY*100:43)+"%";
+$("animals").style.opacity=(.3+light*.62);
+fish.forEach((it,i)=>{const x=((it.x+now*.001*it.speed)%1400)-150,y=it.y+Math.sin(now*.001+it.phase)*18;const count=state.photo===2||state.photo===5?1:state.photo===4?.12:.45;it.g.setAttribute("transform","translate("+x+","+y+") scale("+(it.size*count)+")");it.g.style.opacity=count>0.2?"0.82":"0.4"});
+weeds.forEach((it,i)=>{const visible=state.photo===1?1:state.photo===4?.02:.34;it.g.setAttribute("transform","translate("+(it.x-state.x*1.1)+",660) scale("+(it.scale*visible)+") rotate("+Math.sin(now*.001+it.phase)*4+")")});
+$("meter").textContent="PROFUNDIDAD "+state.d.toFixed(1)+" m";$("atm").textContent="PRESIÓN ≈ "+(1+state.d/10.3).toFixed(1).replace(".",",")+" atm";$("bearing").textContent="RUMBO "+String(Math.round((state.heading*180/Math.PI%360+360)%360)).padStart(3,"0")+"°";$("speed").textContent="VELOCIDAD "+(Math.abs(go)*4).toFixed(1);$("progress").textContent="HALLAZGOS "+state.discover.size+"/5";
+$("zoneName").textContent=zones[state.photo][0];$("zoneDesc").textContent=zones[state.photo][1];
+near=findNear();$("find").disabled=near<0;$("signal").classList.toggle("show",near>=0&&!state.discover.has(near));if(frame%7===0)drawMap();requestAnimationFrame(redraw)}
+function investigate(){if(near<0){notify("No hay señales suficientemente próximas. Continúa el recorrido.");return}const f=finds[near];$("discoveryTitle").textContent=f.name;$("discoveryText").textContent=f.text;$("discoveryDetail").textContent=f.detail;$("source").href=f.url;$("dialog").hidden=false;state.discover.add(near);$("signal").classList.remove("show");held.clear();state.mouse=false;try{localStorage.setItem("explorandum-cinema-v2-found",JSON.stringify([...state.discover]))}catch(e){}notify("Hallazgo registrado: "+f.name)}
+$("find").onclick=investigate;$("signal").onclick=investigate;$("close").onclick=()=>$("dialog").hidden=true;
+$("light").onclick=()=>{state.lights=!state.lights;$("light").textContent=state.lights?"☀ Focos":"☾ Focos apagados";notify(state.lights?"Focos encendidos":"Focos apagados")};
+$("sonar").onclick=()=>{const nearest=finds.map((f,i)=>({f,i,d:Math.hypot(state.z-f.z,(state.x-f.x)*1.6)})).sort((a,b)=>a.d-b.d)[0];notify("SONAR · "+nearest.f.name+" · "+Math.round(nearest.d)+" unidades de distancia");try{const Audio=window.AudioContext||window.webkitAudioContext;if(Audio){const a=new Audio(),o=a.createOscillator(),g=a.createGain();o.frequency.setValueAtTime(920,a.currentTime);o.frequency.exponentialRampToValueAtTime(360,a.currentTime+.45);g.gain.setValueAtTime(.13,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.45);o.connect(g);g.connect(a.destination);o.start();o.stop(a.currentTime+.45);o.onended=()=>a.close()}}catch(e){}};
+$("full").onclick=()=>{if(!document.fullscreenElement)deck.requestFullscreen?.().catch(()=>notify("El navegador no permite pantalla completa."));else document.exitFullscreen?.()};
+const keys={ArrowUp:"w",ArrowDown:"s",ArrowLeft:"a",ArrowRight:"d"};
+window.addEventListener("keydown",e=>{if(e.target.matches("textarea,input"))return;const k=keys[e.key]||e.key.toLowerCase();if(["w","a","s","d","q","e"].includes(k)){held.add(k);e.preventDefault()}if(e.key==="Escape"){$("dialog").hidden=true}});
+window.addEventListener("keyup",e=>held.delete(keys[e.key]||e.key.toLowerCase()));window.addEventListener("blur",()=>{held.clear();state.mouse=false});
+document.querySelectorAll("[data-hold]").forEach(btn=>{const k=btn.dataset.hold;btn.addEventListener("pointerdown",e=>{e.preventDefault();btn.setPointerCapture?.(e.pointerId);held.add(k)});for(const event of ["pointerup","pointercancel","lostpointercapture"])btn.addEventListener(event,()=>held.delete(k))});
+function movePointer(e){const r=view.getBoundingClientRect();state.aimX=Math.min(1,Math.max(0,(e.clientX-r.left)/r.width));state.aimY=Math.min(1,Math.max(0,(e.clientY-r.top)/r.height))}
+view.addEventListener("pointerdown",e=>{if(!$("dialog").hidden)return;state.mouse=true;movePointer(e);view.setPointerCapture?.(e.pointerId);e.preventDefault()});view.addEventListener("pointermove",e=>{if(state.mouse)movePointer(e)});for(const event of ["pointerup","pointercancel","lostpointercapture"])view.addEventListener(event,()=>state.mouse=false);
+view.addEventListener("wheel",e=>{e.preventDefault();state.d=Math.max(1,Math.min(140,state.d+Math.sign(e.deltaY)*3))},{passive:false});
+window.addEventListener("pagehide",()=>{held.clear();state.mouse=false});requestAnimationFrame(redraw);
+</script></body></html>
