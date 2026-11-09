@@ -110,7 +110,19 @@ const TRACK=[
 {title:'Aguas abiertas',x:42,z:-155,desc:'Delfines, rayas y otros nadadores'},
 {title:'Talud y aguas más profundas',x:60,z:-230,desc:'Una ballena aparece en la distancia'}
 ];
-const POI=RECORDS.map((f,i)=>{const sites=[[0,45],[18,26],[-30,-32],[40,60],[8,-95],[-12,-120],[30,-174],[55,-225],[-12,50],[-42,-165]];const p=sites[i%sites.length];return {...f,wx:p[0],wz:p[1],wy:-(Math.min(68,Math.max(8,f.d||20))),idx:i}});
+const LOCATIONS=[
+{name:/ángel/i,x:2,z:-45,depth:16},
+{name:/Praderas/i,x:-42,z:72,depth:11},
+{name:/Móbulas/i,x:-26,z:-32,depth:19},
+{name:/Lobo marino/i,x:40,z:63,depth:12},
+{name:/Coral/i,x:-26,z:-75,depth:22},
+{name:/Morena/i,x:-10,z:-92,depth:26},
+{name:/mariposa/i,x:15,z:-84,depth:17},
+{name:/Cousteau|acuario del mundo/i,x:43,z:-170,depth:26},
+{name:/jorobada/i,x:55,z:-220,depth:24},
+{name:/Tiburón ballena/i,x:-12,z:53,depth:16}
+];
+const POI=RECORDS.map((f,i)=>{const loc=LOCATIONS.find(x=>x.name.test(f.name))||{x:12,z:-100,depth:20};return {...f,wx:loc.x,wz:loc.z,wy:-loc.depth,idx:i}});
 let renderer,scene,camera,waterPlane,waterShader,seaBed,hemi,sun,headlight,modelStatus='',models=[],last=performance.now(),inWorld=false,playing=false,dragging=false,dragX=0,dragY=0,quality='medium',frame=0;
 const player={x:0,y:-13,z:125,yaw:0,pitch:-0.09,speed:0,cruise:false,lights:true,found:new Set(),near:-1};
 const held=new Set(),clock=new THREE.Clock();
@@ -236,7 +248,7 @@ function findNear(){
 }
 function openInfo(i){if(i==null||i<0||i>=POI.length)return;const f=POI[i];player.cruise=false;held.clear();playing=false;
  $('name').textContent=f.name;$('latin').textContent=f.latin||'';$('kind').textContent=f.category||'BIOLOGÍA MARINA';$('summary').textContent=f.text||'';$('detail').textContent=f.detail||'';$('observe').textContent=f.observe||'Observa atentamente los rasgos anatómicos visibles.';$('place').textContent=f.place||'Ilustración documental';
- const img=$('specimen');if(f.photo){img.hidden=false;img.src=f.photo;img.alt='Fotografía de '+f.name;img.onerror=()=>{if(f.file&&!img.dataset.retry){img.dataset.retry='1';img.src='https://commons.wikimedia.org/wiki/Special:Redirect/file/'+encodeURIComponent(f.file)+'?width=960'}else img.hidden=true}}else img.hidden=true;
+ const img=$('specimen');if(f.photo){img.hidden=false;img.dataset.retry='';img.src=f.photo;img.alt='Fotografía de '+f.name;img.onerror=()=>{if(f.file&&!img.dataset.retry){img.dataset.retry='1';img.src='https://commons.wikimedia.org/wiki/Special:Redirect/file/'+encodeURIComponent(f.file)+'?width=960'}else img.hidden=true}}else img.hidden=true;
  $('source').href=f.url||'https://oceanservice.noaa.gov/';$('photocredit').href=f.file?'https://commons.wikimedia.org/wiki/File:'+encodeURIComponent(f.file.replaceAll(' ','_')):f.url||'#';
  $('photocredit').textContent=f.photographer?'Fotografía: '+f.photographer+' · '+(f.license||'ver licencia'):'Fuentes e imágenes';
  const clip=$('clip');clip.pause();clip.removeAttribute('src');clip.load();$('filmblock').hidden=!f.video;
