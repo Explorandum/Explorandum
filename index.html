@@ -98,14 +98,17 @@ body{background:#fff9ec;color:#173f49}
 .dialogue-replies{display:grid;gap:9px;margin:16px 0}.dialogue-replies button{text-align:left;background:#fff8ef;border:2px solid #ffcfaa;border-radius:11px;padding:13px 17px;font-weight:800;color:#36505a}.dialogue-replies button:hover{background:#ffe6cc;border-color:#ff9d4b}
 .dialogue-followup{background:#fff0d7;border-radius:12px;padding:17px 20px;margin-top:15px;border-left:5px solid #ff933e}
 @media(max-width:760px){.path-steps{display:grid;grid-template-columns:1fr}.path-steps button{min-width:0}.path-hero{padding:15px}.dialogue p{font-size:16px!important}}
-</style></head><body><div class="scene"><div class="backdrop"></div><header class="header"><div class="brand">EXPLORANDUM</div><button onclick="openScene('about')">Sobre esta escena</button></header><div class="scene-inner"><div class="adventure-ui"><div class="episode"><span class="pulse"></span> EXPEDICIÓN ABIERTA <span class="episode-number">01 — MAR DE CORTÉS</span></div><h1>EL MAPA<br><span>IMPOSIBLE.</span></h1><p class="hook">Durante siglos, miles de personas creyeron en una isla que nunca existió.</p><div class="quest-card"><div class="quest-top"><span class="quest-icon">↗</span><div><strong>Tres caminos. Ninguna respuesta fácil.</strong><small>Explora lo que te intrigue. Puedes cambiar de rumbo.</small></div></div><div class="quest-grid"><button class="quest-main" onclick="openScene('map')"><span class="quest-emoji">01</span><span><b>EL DOCUMENTO</b><small>Un mapa que desafía la realidad</small></span><span class="arrow">↗</span></button><button onclick="openScene('coast')"><span class="quest-emoji">02</span><span><b>EL TERRITORIO</b><small>La costa desde otra perspectiva</small></span></button><button onclick="openScene('voice')"><span class="quest-emoji">03</span><span><b>LA HIPÓTESIS</b><small>Diego ha encontrado una contradicción</small></span></button></div></div></div></div></div><section class="info"><span class="tag">TU MUNDO POR DESCUBRIR</span><h2>No todo es lo que parece.</h2><p>Un mapa de hace siglos. Una costa que puedes explorar. Y muchas pistas que todavía no has visto.</p><p class="behind-scenes">Esta es una primera prueba visual. Diego todavía no aparece como personaje animado.</p><div class="credits">Fotografía de Bahía Concepción: Comisión Mexicana de Filmaciones, <a href="https://commons.wikimedia.org/wiki/File:Golfo_de_California,_Baja_California_Sur_(21096419295).jpg" target="_blank" rel="noopener">Wikimedia Commons</a>, licencia CC BY-SA 2.0. Mapa: Joan Vinckeboons, hacia 1650, <a href="https://www.loc.gov/item/99443375/" target="_blank" rel="noopener">Library of Congress</a>, dominio público. Fotografía utilizada sin modificaciones de contenido; recorte visual mediante CSS. La escena combina la fotografía con una superposición oscura para legibilidad.</div></section>
+
+.new-route{display:flex;align-items:center;gap:16px;width:100%;max-width:1060px;margin-top:15px;padding:15px 20px;border:2px solid #ff9c4e;border-radius:13px;background:#ffb65cf5;color:#573312;text-align:left;box-shadow:0 9px 24px #b2582b3d;animation:rise .4s ease}.new-route[hidden]{display:none!important}.new-route b{display:block;font-weight:950;font-size:13px;letter-spacing:.08em}.new-route small{display:block;margin-top:4px;font-size:12px}.new-route-icon{display:grid;place-items:center;border-radius:8px;background:#fff4df;width:38px;height:38px;font-size:24px}.new-route>span:last-child{margin-left:auto;font-size:24px}.new-route:hover{background:#ffd18b;transform:translateY(-2px)}
+.archive-choices{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}.archive-choices button{background:#fff2d9;border:2px solid #ffbd79;border-radius:12px;padding:19px;text-align:left;color:#244c58}.archive-choices button:hover{background:#ffe3b8;border-color:#f89143}.archive-choices strong{display:block;margin:8px 0;font-size:17px}.archive-choices small{font-size:13px}.archive-num{display:inline-grid;place-items:center;background:#ff9b48;color:white;font-weight:950;border-radius:7px;width:33px;height:33px}@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}@media(max-width:650px){.archive-choices{grid-template-columns:1fr}.new-route{padding:12px}}
+</style></head><body><div class="scene"><div class="backdrop"></div><header class="header"><div class="brand">EXPLORANDUM</div><button onclick="openScene('about')">Sobre esta escena</button></header><div class="scene-inner"><div class="adventure-ui"><div class="episode"><span class="pulse"></span> EXPEDICIÓN ABIERTA <span class="episode-number">01 — MAR DE CORTÉS</span></div><h1>EL MAPA<br><span>IMPOSIBLE.</span></h1><p class="hook">Durante siglos, miles de personas creyeron en una isla que nunca existió.</p><div class="quest-card"><div class="quest-top"><span class="quest-icon">↗</span><div><strong>Tres caminos. Ninguna respuesta fácil.</strong><small>Explora lo que te intrigue. Puedes cambiar de rumbo.</small></div></div><div class="quest-grid"><button class="quest-main" onclick="openScene('map')"><span class="quest-emoji">01</span><span><b>EL DOCUMENTO</b><small>Un mapa que desafía la realidad</small></span><span class="arrow">↗</span></button><button onclick="openScene('coast')"><span class="quest-emoji">02</span><span><b>EL TERRITORIO</b><small>La costa desde otra perspectiva</small></span></button><button onclick="openScene('voice')"><span class="quest-emoji">03</span><span><b>LA HIPÓTESIS</b><small>Diego ha encontrado una contradicción</small></span></button></div><button id="new-route" class="new-route" onclick="openScene('archive')" hidden><span class="new-route-icon">✦</span><span><b>SE HA ABIERTO OTRA RUTA</b><small>El archivo de Diego · Un segundo mapa</small></span><span>↗</span></button></div></div></div></div></div><section class="info"><span class="tag">TU MUNDO POR DESCUBRIR</span><h2>No todo es lo que parece.</h2><p>Un mapa de hace siglos. Una costa que puedes explorar. Y muchas pistas que todavía no has visto.</p><p class="behind-scenes">Esta es una primera prueba visual. Diego todavía no aparece como personaje animado.</p><div class="credits">Fotografía de Bahía Concepción: Comisión Mexicana de Filmaciones, <a href="https://commons.wikimedia.org/wiki/File:Golfo_de_California,_Baja_California_Sur_(21096419295).jpg" target="_blank" rel="noopener">Wikimedia Commons</a>, licencia CC BY-SA 2.0. Mapa: Joan Vinckeboons, hacia 1650, <a href="https://www.loc.gov/item/99443375/" target="_blank" rel="noopener">Library of Congress</a>, dominio público. Fotografía utilizada sin modificaciones de contenido; recorte visual mediante CSS. La escena combina la fotografía con una superposición oscura para legibilidad.</div></section>
 <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Escena interactiva"><div class="modal"><button class="close" onclick="closeScene()">Cerrar ×</button><div id="content"></div></div></div>
 <script>
 
 "use strict";
 let current="";
 const key="explorandum-real-scene-v1";
-let seen=[];try{seen=JSON.parse(localStorage.getItem(key))||[]}catch(e){}
+let seen=[];try{seen=JSON.parse(localStorage.getItem(key))||[]}catch(e){}let unlocked=false;try{unlocked=localStorage.getItem('explorandum-route-04')==='yes'}catch(e){}
 const sourceMap="https://commons.wikimedia.org/wiki/Special:FilePath/Map%20of%20California%20Shown%20as%20an%20Island%20WDL2661.png?width=1280";
 const nav='<div class="choices"><button onclick="openScene(\'map\')">01 · El mapa</button><button onclick="openScene(\'coast\')">02 · La costa</button><button onclick="openScene(\'voice\')">03 · Diego</button></div>';
 function openScene(id){
@@ -121,6 +124,13 @@ function openScene(id){
  <div class="map-compare" id="present"><iframe title="Mapa satelital actual del golfo de California" loading="lazy" src="https://maps.google.com/maps?q=27.6,-111.4&t=k&z=6&output=embed"></iframe><p>Desplázate y acerca el mapa satelital. Baja California es una península: está unida a tierra firme por el norte.</p></div>
  <div class="discovery"><h3>¿Qué detalle te llama más la atención?</h3><p>No hay examen ni respuesta obligatoria. Elige una idea para seguir investigando.</p><div class="observation"><button onclick="discover('island')">Parece separada del continente</button><button onclick="discover('sources')">¿Cómo pudieron creerlo?</button><button onclick="discover('time')">¿Cuándo descubrieron el error?</button></div><div id="discovery-result" aria-live="polite"></div></div>
  `+nav;
+ else if(id==="archive")el.innerHTML=`
+<div class="kicker">NUEVA RUTA / EL ARCHIVO DE DIEGO</div><h2>Dos mapas. Dos historias.</h2>
+<div class="path-hero warm"><h3>Acabas de encontrar una contradicción.</h3><p>Diego abre otra carpeta. «El problema no es que un mapa estuviera mal. Es que distintas personas defendían versiones diferentes de un mismo territorio».</p></div>
+<div class="archive-choices"><button onclick="archiveChoice('trust')"><span class="archive-num">A</span><strong>¿Por qué confiaban en un mapa?</strong><small>Autoridad, prestigio y copias</small></button><button onclick="archiveChoice('check')"><span class="archive-num">B</span><strong>¿Cómo se podía comprobar?</strong><small>Viajes, observaciones y pruebas</small></button></div>
+<div id="archive-result" class="path-reveal" aria-live="polite"><strong>Elige por dónde seguir.</strong><p>No hay una respuesta correcta que desbloquear. Cada decisión revela una parte de la historia.</p></div>
+<p class="credits">Esta escena es ficción histórica. Las preguntas reflejan problemas reales de la cartografía antigua; no se atribuye a Diego ni a su carpeta la existencia de un segundo documento histórico concreto.</p>
+`+nav;
  else if(id==="coast")el.innerHTML=`
 <div class="kicker">RUTA 02 / EL TERRITORIO</div><h2>Un mar que se abrió paso.</h2>
 <div class="path-hero"><h3>La Tierra nunca está quieta.</h3><p>Estás mirando un paisaje que sigue cambiando. Explora el golfo desde el espacio y descubre cómo llegó a existir.</p></div>
@@ -138,16 +148,17 @@ function openScene(id){
  else el.innerHTML='<h2>Un mundo real. Una historia por descubrir.</h2><p>La fotografía y el mapa histórico proceden de archivos reales. Diego y el hilo narrativo son ficción. Esta es una primera prueba interactiva, no una aventura completa.</p>'+nav;
  document.getElementById("overlay").classList.add("open");
  document.querySelector(".modal").scrollTop=0;
+ updateRoute();
 }
 function toggleZoom(){const v=document.getElementById("document-viewport");if(!v)return;const z=v.classList.toggle("zoomed");document.getElementById("zoom-tip").textContent=z?"Toca para volver a la vista completa":"Toca para acercarte · vuelve a tocar para alejarte"}
 function setView(view){const old=view==="old";document.getElementById("historical").style.display=old?"block":"none";document.getElementById("present").classList.toggle("active",!old);document.getElementById("btn-old").setAttribute("aria-pressed",String(old));document.getElementById("btn-now").setAttribute("aria-pressed",String(!old))}
-function discover(which){const answers={
+function discover(which){unlockRoute();const answers={
 island:'<strong>Una diferencia decisiva</strong>En el mapa antiguo, California aparece rodeada de agua. En el mapa actual puedes seguir la península hasta su unión con el continente por el norte. Prueba a alternar entre ambos.',
 sources:'<strong>Una hipótesis histórica</strong>Los mapas antiguos reunían observaciones, relatos y copias de mapas anteriores. Un error podía viajar de un documento a otro. ¿Cómo distinguirías una observación directa de un rumor?',
 time:'<strong>Una historia más larga de lo que parece</strong>La idea de California como isla persistió en la cartografía europea durante los siglos XVII y XVIII, aunque también existían mapas que la mostraban como península. No hubo un único instante en que todos cambiaran de opinión.'
 };const el=document.getElementById("discovery-result");if(el)el.innerHTML='<div class="result">'+answers[which]+'</div>'}
 
-function showGeology(stage){
+function showGeology(stage){unlockRoute();
  const data={
  1:['Antes del golfo','Hace millones de años, la geografía de esta región era muy distinta. La apertura del golfo está vinculada a la reorganización de los límites entre las placas tectónicas del Pacífico y Norteamérica.'],
  2:['La separación','El movimiento relativo de las placas contribuyó a estirar, fracturar y desplazar la corteza. Con el tiempo, el mar ocupó una cuenca que se estaba abriendo. No fue una grieta que apareció de repente.'],
@@ -156,7 +167,7 @@ function showGeology(stage){
  for(let i=1;i<=3;i++){const b=document.getElementById('geo-'+i);if(b)b.classList.toggle('active',i===stage)}
  const e=document.getElementById('geo-story');if(e)e.innerHTML='<strong>'+data[stage][0]+'</strong><p>'+data[stage][1]+'</p>';
 }
-function replyDiego(choice){
+function replyDiego(choice){unlockRoute();
  const data={
  seen:['Buena pregunta.','Hubo expediciones y testimonios que contradecían la idea de la isla. Pero la información no circulaba como ahora, y los mapas podían mantener versiones diferentes del mismo territorio.','Abrir el documento'],
  copies:['Esa es una pista importante.','La cartografía también tiene historia: copiar una fuente prestigiosa puede transmitir tanto sus aciertos como sus errores. La pregunta es quién comprobó qué, y cuándo.','Examinar el mapa'],
@@ -165,7 +176,18 @@ function replyDiego(choice){
  const a=data[choice],el=document.getElementById('diego-answer');
  if(el)el.innerHTML='<div class="dialogue-followup"><div class="speaker">DIEGO · RESPUESTA</div><h3>'+a[0]+'</h3><p>'+a[1]+'</p><button class="reveal-button" onclick="openScene(\'map\')">'+a[2]+' ↗</button></div>';
 }
+
+function unlockRoute(){if(!unlocked){unlocked=true;try{localStorage.setItem('explorandum-route-04','yes')}catch(e){}}updateRoute()}
+function updateRoute(){const b=document.getElementById('new-route');if(b)b.hidden=!unlocked;const x=document.getElementById('route-note');if(x)x.hidden=!unlocked}
+function archiveChoice(which){
+ const data={
+ trust:['La autoridad de un mapa','Un mapa podía parecer fiable porque lo firmaba un cartógrafo respetado o porque repetía información ya publicada. Pero repetir una afirmación no la convierte en una observación.','¿Y si un error llegara a todos los mapas?'],
+ check:['Comprobar el terreno','Viajar, describir las costas, contrastar testimonios y levantar nuevas cartas permitía corregir representaciones anteriores. La información podía tardar mucho en difundirse.','¿Quién decide cuándo una prueba es suficiente?']
+ };
+ const a=data[which],el=document.getElementById('archive-result');
+ if(el)el.innerHTML='<strong>'+a[0]+'</strong><p>'+a[1]+'</p><p><em>'+a[2]+'</em></p><button class="reveal-button" onclick="openScene(\'voice\')">Volver a hablar con Diego ↗</button>';
+}
 function closeScene(){document.getElementById("overlay").classList.remove("open")}
-document.addEventListener("keydown",e=>{if(e.key==="Escape")closeScene()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeScene()});updateRoute();
 
 </script></body></html>
