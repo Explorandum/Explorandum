@@ -75,6 +75,29 @@ body{background:#fff9ec;color:#173f49}
 .info{background:#fff9ee!important;color:#23444e!important}.info h2{color:#176779!important}.info p{color:#365e68!important}.info .tag{background:#d4ff65;color:#21533d;border:0;border-radius:9px}.info .credits{color:#65787a}.info .credits a{color:#137d8e}
 .overlay{background:#0d6b7a73!important;backdrop-filter:blur(8px)}.modal{background:#fffdf4!important;border:3px solid #fff!important;color:#23434c!important;border-radius:19px!important;box-shadow:0 25px 90px #0a536670}.modal h2{color:#126d81!important}.modal p{color:#36545c!important}.modal .kicker{color:#ef7157!important}.close{background:#d5fbfc;color:#146678;border:1px solid #94d6db;border-radius:9px}.choices button{background:#d4ff65;color:#1d4f54;border:0;border-radius:9px}.choices button:hover{background:#b8ef49}.discovery{background:#e5f9fb;border:1px solid #9bd9e1;border-radius:13px}.discovery h3{color:#14788d}.observation button{border-color:#a7d6da;border-radius:9px}.result{background:#edffdc;border-color:#8dd54e}.explore-actions button[aria-pressed="true"]{background:#d4ff65}.document-viewport{border-color:#9ed6d4}
 @media(max-width:760px){.backdrop{background-image:linear-gradient(0deg,rgba(6,73,89,.20),rgba(6,73,89,.06)),url('https://commons.wikimedia.org/wiki/Special:FilePath/Golfo%20de%20California%2C%20Baja%20California%20Sur%20%2821096419295%29.jpg?width=1600')!important}.scene-inner{padding-bottom:22px}.quest-grid button,.quest-grid .quest-main{min-height:72px!important}.quest-top{padding:10px}.scene h1{text-shadow:0 3px 15px #07516b8c!important}}
+
+/* Energía cálida: naranja mandarina y coral sin perder la luz */
+:root{--orange:#ff8b37;--apricot:#ffba69;--coral:#ff6959}
+.scene h1 span{color:#ffdc72!important;text-shadow:0 3px 0 #ed6f2c,0 8px 23px #07506b7c!important}
+.episode .pulse{background:#ff7e39;box-shadow:0 0 0 4px #ffad5d55}
+.quest-grid button:nth-child(3){background:#ffd0a3f5!important;border-color:#ffc38c!important}
+.quest-grid button:nth-child(3) .quest-emoji{background:#ff8b37;color:#fff;border-color:#ff8b37}
+.quest-grid button:nth-child(2) .quest-emoji{background:#17b8c9;color:white;border-color:#17b8c9}
+.quest-grid .quest-main .quest-emoji{background:#75b92b;color:white;border-color:#75b92b}
+.quest-icon{background:#ffab56;color:#6d340e}
+.info .tag{background:#ffb368;color:#6d3b16}
+.modal .kicker{color:#ed7430!important}
+.choices button:nth-child(3){background:#ff9c4d;color:#60390e}
+.path-hero{padding:20px 23px;border-radius:14px;margin:17px 0 18px;background:linear-gradient(110deg,#c5f7f4,#fff0cf);border:1px solid #b7deda}
+.path-hero.warm{background:linear-gradient(115deg,#ffe0b5,#fff5e6);border-color:#ffc58b}
+.path-hero h3{font-size:clamp(22px,3vw,32px);letter-spacing:-.035em;color:#12596b;margin:0 0 7px}
+.path-hero p{margin:0!important;font-size:16px!important}
+.path-steps{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}.path-steps button{border:2px solid #87d5d8;border-radius:10px;background:#fff;color:#165466;padding:12px 15px;font-weight:850;flex:1;min-width:140px}.path-steps button.active{background:#ff9d4b;border-color:#ff9d4b;color:#542f12}.path-steps button:hover{border-color:#ff9d4b}
+.path-reveal{background:#fff5e8;border-left:5px solid #ff9d4b;border-radius:8px;padding:17px;margin:13px 0;color:#294f59;min-height:110px}.path-reveal p{margin:8px 0!important}
+.dialogue{background:#e6f9f8;border-radius:15px;padding:17px 20px;margin:16px 0;border:1px solid #b7e3e2}.dialogue .speaker{font-size:11px;letter-spacing:.12em;font-weight:950;color:#e76d30}.dialogue p{margin:8px 0 0!important;font-size:18px!important}
+.dialogue-replies{display:grid;gap:9px;margin:16px 0}.dialogue-replies button{text-align:left;background:#fff8ef;border:2px solid #ffcfaa;border-radius:11px;padding:13px 17px;font-weight:800;color:#36505a}.dialogue-replies button:hover{background:#ffe6cc;border-color:#ff9d4b}
+.dialogue-followup{background:#fff0d7;border-radius:12px;padding:17px 20px;margin-top:15px;border-left:5px solid #ff933e}
+@media(max-width:760px){.path-steps{display:grid;grid-template-columns:1fr}.path-steps button{min-width:0}.path-hero{padding:15px}.dialogue p{font-size:16px!important}}
 </style></head><body><div class="scene"><div class="backdrop"></div><header class="header"><div class="brand">EXPLORANDUM</div><button onclick="openScene('about')">Sobre esta escena</button></header><div class="scene-inner"><div class="adventure-ui"><div class="episode"><span class="pulse"></span> EXPEDICIÓN ABIERTA <span class="episode-number">01 — MAR DE CORTÉS</span></div><h1>EL MAPA<br><span>IMPOSIBLE.</span></h1><p class="hook">Durante siglos, miles de personas creyeron en una isla que nunca existió.</p><div class="quest-card"><div class="quest-top"><span class="quest-icon">↗</span><div><strong>Tres caminos. Ninguna respuesta fácil.</strong><small>Explora lo que te intrigue. Puedes cambiar de rumbo.</small></div></div><div class="quest-grid"><button class="quest-main" onclick="openScene('map')"><span class="quest-emoji">01</span><span><b>EL DOCUMENTO</b><small>Un mapa que desafía la realidad</small></span><span class="arrow">↗</span></button><button onclick="openScene('coast')"><span class="quest-emoji">02</span><span><b>EL TERRITORIO</b><small>La costa desde otra perspectiva</small></span></button><button onclick="openScene('voice')"><span class="quest-emoji">03</span><span><b>LA HIPÓTESIS</b><small>Diego ha encontrado una contradicción</small></span></button></div></div></div></div></div><section class="info"><span class="tag">TU MUNDO POR DESCUBRIR</span><h2>No todo es lo que parece.</h2><p>Un mapa de hace siglos. Una costa que puedes explorar. Y muchas pistas que todavía no has visto.</p><p class="behind-scenes">Esta es una primera prueba visual. Diego todavía no aparece como personaje animado.</p><div class="credits">Fotografía de Bahía Concepción: Comisión Mexicana de Filmaciones, <a href="https://commons.wikimedia.org/wiki/File:Golfo_de_California,_Baja_California_Sur_(21096419295).jpg" target="_blank" rel="noopener">Wikimedia Commons</a>, licencia CC BY-SA 2.0. Mapa: Joan Vinckeboons, hacia 1650, <a href="https://www.loc.gov/item/99443375/" target="_blank" rel="noopener">Library of Congress</a>, dominio público. Fotografía utilizada sin modificaciones de contenido; recorte visual mediante CSS. La escena combina la fotografía con una superposición oscura para legibilidad.</div></section>
 <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Escena interactiva"><div class="modal"><button class="close" onclick="closeScene()">Cerrar ×</button><div id="content"></div></div></div>
 <script>
@@ -98,8 +121,20 @@ function openScene(id){
  <div class="map-compare" id="present"><iframe title="Mapa satelital actual del golfo de California" loading="lazy" src="https://maps.google.com/maps?q=27.6,-111.4&t=k&z=6&output=embed"></iframe><p>Desplázate y acerca el mapa satelital. Baja California es una península: está unida a tierra firme por el norte.</p></div>
  <div class="discovery"><h3>¿Qué detalle te llama más la atención?</h3><p>No hay examen ni respuesta obligatoria. Elige una idea para seguir investigando.</p><div class="observation"><button onclick="discover('island')">Parece separada del continente</button><button onclick="discover('sources')">¿Cómo pudieron creerlo?</button><button onclick="discover('time')">¿Cuándo descubrieron el error?</button></div><div id="discovery-result" aria-live="polite"></div></div>
  `+nav;
- else if(id==="coast")el.innerHTML='<div class="kicker">ARCHIVO 02 / EL TERRITORIO</div><h2>La costa cuenta otra historia.</h2><p>Desde el espacio puedes recorrer la península de Baja California y seguir el golfo hacia el norte. Busca dónde se une al continente.</p><iframe class="map-frame" title="Mapa satelital del golfo de California" loading="lazy" src="https://maps.google.com/maps?q=27.6,-111.4&t=k&z=6&output=embed"></iframe><div class="discovery"><h3>Una pista que cambia el mapa</h3><p>El golfo de California es una cuenca tectónica en evolución. Su formación está relacionada con el movimiento de las placas del Pacífico y Norteamérica. La forma actual de la península no es permanente a escala geológica.</p><button class="reveal-button" onclick="openScene(\'map\')">Comparar con el mapa antiguo ↗</button></div>'+nav;
- else if(id==="voice")el.innerHTML='<div class="kicker">DIEGO / CUADERNO DE CAMPO</div><h2>Hay algo que no encaja.</h2><p>—Fíjate bien. Un cartógrafo del siglo XVII dibujó California como una isla. Y otros siguieron repitiéndolo.</p><p>—Imagina viajar sin satélites ni fotografías aéreas. Un relato de segunda mano podía convertirse en una línea sobre el papel. Y esa línea, en una certeza.</p><div class="discovery"><h3>La pregunta de Diego</h3><p>¿Qué diferencia hay entre haber visto algo, haber oído hablar de ello y darlo por demostrado?</p><button class="reveal-button" onclick="openScene(\'map\')">Volver al documento ↗</button></div>'+nav;
+ else if(id==="coast")el.innerHTML=`
+<div class="kicker">RUTA 02 / EL TERRITORIO</div><h2>Un mar que se abrió paso.</h2>
+<div class="path-hero"><h3>La Tierra nunca está quieta.</h3><p>Estás mirando un paisaje que sigue cambiando. Explora el golfo desde el espacio y descubre cómo llegó a existir.</p></div>
+<iframe class="map-frame" title="Vista satelital del golfo de California" loading="lazy" src="https://maps.google.com/maps?q=27.6,-111.4&t=k&z=6&output=embed"></iframe>
+<div class="path-steps"><button id="geo-1" class="active" onclick="showGeology(1)">01 · Antes del golfo</button><button id="geo-2" onclick="showGeology(2)">02 · La separación</button><button id="geo-3" onclick="showGeology(3)">03 · Hoy y mañana</button></div>
+<div class="path-reveal" id="geo-story" aria-live="polite"><strong>Antes del golfo</strong><p>Hace millones de años, la geografía de esta región era muy distinta. La apertura del golfo está vinculada a la reorganización de los límites entre las placas tectónicas del Pacífico y Norteamérica.</p></div>
+<p class="credits">Secuencia geológica divulgativa simplificada: no representa una reconstrucción visual exacta ni fechas precisas de cada etapa.</p>`+nav;
+ else if(id==="voice")el.innerHTML=`
+<div class="kicker">ENCUENTRO 03 / DIEGO</div><h2>«Te estaba esperando».</h2>
+<div class="path-hero warm"><h3>El cuaderno de Diego</h3><p>Diego es un personaje ficticio. Su investigación parte de mapas y paisajes reales.</p></div>
+<div class="dialogue"><span class="speaker">DIEGO · MENSAJE 01</span><p>He encontrado algo raro. Durante generaciones dibujaron California como una isla. Pero la tierra no había desaparecido. ¿Cómo pudo una idea equivocada viajar tanto?</p></div>
+<div class="dialogue-replies"><button onclick="replyDiego('seen')">«¿Nadie había recorrido esa costa?»</button><button onclick="replyDiego('copies')">«¿Y si copiaban los mapas sin comprobarlos?»</button><button onclick="replyDiego('mystery')">«¿Hay alguna otra pista?»</button></div>
+<div id="diego-answer" aria-live="polite"></div>
+`+nav;
  else el.innerHTML='<h2>Un mundo real. Una historia por descubrir.</h2><p>La fotografía y el mapa histórico proceden de archivos reales. Diego y el hilo narrativo son ficción. Esta es una primera prueba interactiva, no una aventura completa.</p>'+nav;
  document.getElementById("overlay").classList.add("open");
  document.querySelector(".modal").scrollTop=0;
@@ -111,6 +146,25 @@ island:'<strong>Una diferencia decisiva</strong>En el mapa antiguo, California a
 sources:'<strong>Una hipótesis histórica</strong>Los mapas antiguos reunían observaciones, relatos y copias de mapas anteriores. Un error podía viajar de un documento a otro. ¿Cómo distinguirías una observación directa de un rumor?',
 time:'<strong>Una historia más larga de lo que parece</strong>La idea de California como isla persistió en la cartografía europea durante los siglos XVII y XVIII, aunque también existían mapas que la mostraban como península. No hubo un único instante en que todos cambiaran de opinión.'
 };const el=document.getElementById("discovery-result");if(el)el.innerHTML='<div class="result">'+answers[which]+'</div>'}
+
+function showGeology(stage){
+ const data={
+ 1:['Antes del golfo','Hace millones de años, la geografía de esta región era muy distinta. La apertura del golfo está vinculada a la reorganización de los límites entre las placas tectónicas del Pacífico y Norteamérica.'],
+ 2:['La separación','El movimiento relativo de las placas contribuyó a estirar, fracturar y desplazar la corteza. Con el tiempo, el mar ocupó una cuenca que se estaba abriendo. No fue una grieta que apareció de repente.'],
+ 3:['Un paisaje en movimiento','La región sigue siendo tectónicamente activa. Los terremotos y el desplazamiento de fallas recuerdan que la forma de las costas puede cambiar a lo largo de millones de años.']
+ };
+ for(let i=1;i<=3;i++){const b=document.getElementById('geo-'+i);if(b)b.classList.toggle('active',i===stage)}
+ const e=document.getElementById('geo-story');if(e)e.innerHTML='<strong>'+data[stage][0]+'</strong><p>'+data[stage][1]+'</p>';
+}
+function replyDiego(choice){
+ const data={
+ seen:['Buena pregunta.','Hubo expediciones y testimonios que contradecían la idea de la isla. Pero la información no circulaba como ahora, y los mapas podían mantener versiones diferentes del mismo territorio.','Abrir el documento'],
+ copies:['Esa es una pista importante.','La cartografía también tiene historia: copiar una fuente prestigiosa puede transmitir tanto sus aciertos como sus errores. La pregunta es quién comprobó qué, y cuándo.','Examinar el mapa'],
+ mystery:['Sí. Y no es pequeña.','En el siglo XVII había representaciones incompatibles de California. ¿Qué hizo que una de ellas pareciera convincente? Quiero comparar pruebas, no elegir la historia más espectacular.','Buscar en el mapa']
+ };
+ const a=data[choice],el=document.getElementById('diego-answer');
+ if(el)el.innerHTML='<div class="dialogue-followup"><div class="speaker">DIEGO · RESPUESTA</div><h3>'+a[0]+'</h3><p>'+a[1]+'</p><button class="reveal-button" onclick="openScene(\'map\')">'+a[2]+' ↗</button></div>';
+}
 function closeScene(){document.getElementById("overlay").classList.remove("open")}
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeScene()});
 
