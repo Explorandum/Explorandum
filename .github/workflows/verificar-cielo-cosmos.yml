@@ -27,7 +27,7 @@ jobs:
           assert 'class="skyroute"' in s
           assert all(x in s for x in ['Guerrero Negro','GOES-18','San Pedro Mártir','seaTemp','lightPollution'])
           assert 'media/terrestre/golfo-nasa-satelite.jpg' not in s
-          assert 'GOES-18+GEOcolor' in s
+          assert 'GOES-18%20GEOcolor-June-702022.png.webp' in s
           assert 'Misión 07' in s
           assert all(x in s for x in ['birdEvidence','wetlandChoice','weatherEvidence','saveFieldNotes','copyFieldNotes'])
           assert 'science.nasa.gov' in s and 'id="skyQuestion"' in s
