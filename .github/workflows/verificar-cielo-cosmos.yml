@@ -19,12 +19,15 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
           s=Path('cielo-y-cosmos-baja-california.html').read_text()
-          for p in ['media/terrestre/golfo-nasa-satelite.jpg','media/terrestre/sierra-la-laguna-pinos.jpg']:
+          for p in ['media/terrestre/golfo-nasa-satelite.jpg']:
             assert Path(p).is_file() and Path(p).stat().st_size>50000
             assert p in s
           assert s.count('class="station"')==4
+          assert 'Pelicans_in_flight.jpg' in s and 'Brown_pelican_' in s
+          assert 'class="skyroute"' in s
+          assert s.count('media/terrestre/golfo-nasa-satelite.jpg')==1
           assert 'science.nasa.gov' in s and 'id="skyQuestion"' in s
-          print('PASS: cuatro estaciones, fuentes NASA, cuaderno propio, sin costes externos')
+          print('PASS: cuatro estaciones, aves distintas, NASA unica, cuaderno propio')
           PY
       - name: Navegador movil y escritorio
         run: |
