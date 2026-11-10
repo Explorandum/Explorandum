@@ -19,14 +19,16 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
           s=Path('cielo-y-cosmos-baja-california.html').read_text()
-          for p in ['media/terrestre/golfo-nasa-satelite.jpg']:
+          for p in []:
             assert Path(p).is_file() and Path(p).stat().st_size>50000
             assert p in s
           assert s.count('class="station"')==4
           assert 'Pelicans_in_flight.jpg' in s and 'Brown_pelican_' in s
           assert 'class="skyroute"' in s
           assert all(x in s for x in ['Guerrero Negro','GOES-18','San Pedro Mártir','seaTemp','lightPollution'])
-          assert s.count('media/terrestre/golfo-nasa-satelite.jpg')==1
+          assert 'media/terrestre/golfo-nasa-satelite.jpg' not in s
+          assert 'GOES-18+GEOcolor' in s
+          assert 'Misión 07' in s
           assert 'science.nasa.gov' in s and 'id="skyQuestion"' in s
           print('PASS: cuatro estaciones, aves distintas, NASA unica, cuaderno propio')
           PY
@@ -50,6 +52,10 @@ jobs:
             if(!(await p.locator('#seaTempValue').innerText()).includes('28'))throw Error('Climate slider failed');
             await p.locator('[data-view="polar"]').click();
             if(!(await p.locator('#satExplanation').innerText()).includes('órbita baja'))throw Error('Satellite comparison failed');
+            await p.locator('#lightyears').fill('250');
+            if(!(await p.locator('#lyResult').innerText()).includes('250 años'))throw Error('Light travel activity failed');
+            await p.locator('[data-activity="migration"][data-answer="yes"]').click();
+            if(!(await p.locator('#migration-answer').innerText()).includes('paradas'))throw Error('Migration activity failed');
             await p.locator('#lightPollution').fill('90');
             if(!(await p.locator('#observatoryResult').innerText()).includes('iluminación artificial'))throw Error('Observatory experiment failed');
             await p.locator('#skyQuestion').fill('¿Por qué flota una estación espacial?');
