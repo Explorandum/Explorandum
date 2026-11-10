@@ -1,0 +1,56 @@
+name: EXPLORANDUM - comprobar cabina documental
+on:
+  push:
+    paths:
+      - 'cabina-documental.html'
+      - 'inmersion-documental.html'
+      - '.github/workflows/verificar-cabina-documental.yml'
+  workflow_dispatch:
+jobs:
+  browser:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Preparar navegador
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Comprobar cabina y enlaces
+        run: |
+          python3 -m http.server 8765 >/tmp/cabina-http.log 2>&1 &
+          node --input-type=module <<'NODE'
+          import {chromium} from 'playwright';
+          const browser=await chromium.launch({headless:true});
+          const page=await browser.newPage({viewport:{width:1440,height:900}});
+          const errors=[];page.on('pageerror',x=>errors.push(x.message));
+          await page.goto('http://127.0.0.1:8765/cabina-documental.html',{waitUntil:'domcontentloaded'});
+          await page.locator('#begin').click();
+          const first=await page.locator('#name').innerText();
+          if(!first.includes('Tiburón ballena'))throw Error('Debe empezar con tiburon ballena');
+          await page.locator('#next').click();
+          const second=await page.locator('#name').innerText();
+          if(second===first)throw Error('No cambia el encuentro al avanzar');
+          await page.locator('#prev').click();
+          if((await page.locator('#name').innerText())!==first)throw Error('No vuelve al encuentro anterior');
+          await page.locator('#inspect').click();
+          if(!await page.locator('#brief').isVisible())throw Error('La ficha no se abre');
+          await page.locator('#close').click();
+          if(await page.locator('#brief').isVisible())throw Error('La ficha no se cierra');
+          await page.screenshot({path:'/tmp/cabina-documental.png'});
+          await page.goto('http://127.0.0.1:8765/inmersion-documental.html');
+          if(!await page.locator('a[href="cabina-documental.html"]').count())throw Error('Enlace ausente');
+          if(errors.length)throw Error('Errores: '+errors.join(' | '));
+          console.log('PASS: cabina, avance, retroceso, fichas y enlace al documental. '+first);
+          await browser.close();
+          NODE
+      - name: Guardar captura
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cabina-documental
+          path: /tmp/cabina-documental.png
+          if-no-files-found: ignore
