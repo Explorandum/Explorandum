@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - 'cabina-documental.html'
+      - 'media/documental/**'
       - 'inmersion-documental.html'
       - '.github/workflows/verificar-cabina-documental.yml'
   workflow_dispatch:
@@ -30,9 +31,14 @@ jobs:
           await page.goto('http://127.0.0.1:8765/cabina-documental.html',{waitUntil:'domcontentloaded'});
           await page.locator('#begin').click();
           const clips=await page.evaluate(()=>species.map(x=>({name:x.name,url:x.video})));
-          if(clips.length!==3)throw Error('Se esperaban tres encuentros de especie contrastada');
+          if(clips.length!==10)throw Error('Se esperaban diez encuentros audiovisuales');
           if(clips.some(x=>!x.url))throw Error('Encuentro sin video: '+JSON.stringify(clips));
+          if(clips.filter(x=>x.url.startsWith('media/documental/')).length!==8)throw Error('Faltan microvideos locales');
           if(await page.locator('#scene img').count())throw Error('La cabina aún contiene fotografías');
+          if(await page.locator('#context').count())throw Error('Sigue visible el cartel de localización');
+          await page.locator('#prev').click();
+          if(!await page.locator('#moving').getAttribute('src').then(x=>x?.includes('media/documental/')))throw Error('No se selecciona microvideo local');
+          await page.locator('#next').click();
           console.log('CLIPS:',JSON.stringify(clips));
           const first=await page.locator('#name').innerText();
           if(!first.includes('Tiburón ballena'))throw Error('Debe empezar con tiburon ballena');
@@ -60,6 +66,9 @@ jobs:
           clips=json.loads(re.search(r'const species=(\[[\s\S]*?\]);\nconst ',s).group(1))
           for c in clips:
               print('Verificando:',c['name'],flush=True)
+              if not c['video'].startswith(('http://','https://')):
+                  assert __import__('pathlib').Path(c['video']).is_file(), c['video']
+                  continue
               p=subprocess.run(['curl','-L','-sS','-o','/dev/null','-w','%{http_code} %{content_type} %{size_download}','--max-time','30','--range','0-16383',c['video']],capture_output=True,text=True)
               print('Respuesta:',p.stdout,p.stderr[:300],flush=True)
               if p.returncode not in (0,28) or (p.returncode==0 and not p.stdout.startswith(('200 ','206 '))):
