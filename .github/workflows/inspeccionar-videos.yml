@@ -17,7 +17,7 @@ jobs:
           python3 - <<'PY'
           import subprocess,base64,pathlib,imageio_ffmpeg
           ffmpeg=imageio_ffmpeg.get_ffmpeg_exe()
-          for name in ('ballena-madre-cria','raya-comun','morena-aleta-amarilla','ctenoforo-california','medusa-oceano-profundo','ballena-jorobada-azul','bosque-algas','tiburon-zorro-real','pulpos-profundidad-noaa'):
+          for name in ('ballena-madre-cria','raya-comun','morena-aleta-amarilla','ctenoforo-california','medusa-oceano-profundo','ballena-jorobada-azul','bosque-algas','tiburon-zorro-real','pulpos-profundidad-noaa','anemona-viva','pinnipedo-bajo-agua'):
               src=pathlib.Path('media/real')/(name+'.mp4')
               if not src.exists(): raise SystemExit('FALTA '+str(src))
               out='/tmp/'+name+'.jpg'
