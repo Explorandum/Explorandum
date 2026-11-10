@@ -1,0 +1,55 @@
+name: EXPLORANDUM - verificar geologia real y sierra
+on:
+  push:
+    paths:
+      - 'tierra-viva-geologia-real.html'
+      - '.github/workflows/verificar-geologia-real.yml'
+  workflow_dispatch:
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+      - name: Comprobar fotografias y contenido
+        run: |
+          python3 - <<'PY'
+          import pathlib
+          p=pathlib.Path('tierra-viva-geologia-real.html')
+          s=p.read_text()
+          for f in ['media/terrestre/golfo-nasa-satelite.jpg','media/terrestre/sierra-la-laguna-pinos.jpg']:
+            t=pathlib.Path(f)
+            assert t.exists() and t.stat().st_size>50000,(f,'missing')
+            assert t.read_bytes()[:3]==b'\xff\xd8\xff',(f,'not JPG')
+            assert f in s,(f,'not linked')
+          assert '<svg viewBox="0 0 600 260"' not in s
+          print('PASS: imagen NASA y bosque reales, sin diagrama infantil')
+          PY
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test navegador escritorio y movil
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+          python3 -m http.server 8765 >/tmp/tierra-site.log 2>&1 &
+          node --input-type=module <<'NODE'
+          import {chromium} from 'playwright';
+          const b=await chromium.launch({headless:true});
+          for(const viewport of [{width:1440,height:900},{width:390,height:844}]){
+            const p=await b.newPage({viewport});
+            const problems=[];p.on('pageerror',e=>problems.push(e.message));
+            await p.goto('http://127.0.0.1:8765/tierra-viva-geologia-real.html',{waitUntil:'networkidle'});
+            const photo=await p.locator('.plate-scene').evaluate(el=>getComputedStyle(el).backgroundImage);
+            if(!photo.includes('golfo-nasa-satelite.jpg'))throw Error('satellite image missing');
+            const loaded=await p.evaluate(async()=>{const urls=['media/terrestre/golfo-nasa-satelite.jpg','media/terrestre/sierra-la-laguna-pinos.jpg'];return Promise.all(urls.map(async u=>{const i=new Image();i.src=u;await i.decode();return {u,width:i.naturalWidth,height:i.naturalHeight}}))});
+            if(loaded.some(x=>x.width<400||x.height<350))throw Error('Unloaded image '+JSON.stringify(loaded));
+            await p.locator('#tab-3').click();
+            const forest=await p.locator('.visual-mountain').evaluate(el=>getComputedStyle(el).backgroundImage);
+            if(!forest.includes('sierra-la-laguna-pinos.jpg'))throw Error('forest missing');
+            if(problems.length)throw Error(problems.join(' | '));
+            console.log('PASS '+viewport.width+' px photo natural sizes ',JSON.stringify(loaded));
+            await p.close();
+          }
+          await b.close();
+          NODE
