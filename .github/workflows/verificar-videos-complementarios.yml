@@ -1,0 +1,44 @@
+name: EXPLORANDUM - comprobar cabina vídeos complementarios
+on:
+  push:
+    paths:
+      - 'cabina-dos-mares-videos.html'
+      - '.github/workflows/verificar-videos-complementarios.yml'
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Navegador Chromium
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Probar vídeos suplementarios en ficha de corales
+        run: |
+          python3 -m http.server 8765 >/tmp/video-site.log 2>&1 &
+          node --input-type=module <<'NODE'
+          import {chromium} from 'playwright';
+          const browser=await chromium.launch({headless:true});
+          const page=await browser.newPage({viewport:{width:1440,height:900}});
+          const errors=[];page.on('pageerror',x=>errors.push(x.message));
+          await page.goto('http://127.0.0.1:8765/cabina-dos-mares-videos.html',{waitUntil:'domcontentloaded'});
+          await page.locator('#begin').click();
+          await page.locator('#next').click();
+          await page.locator('#inspect').click();
+          if(!await page.locator('#coralExtra').isVisible())throw Error('Sección de Cabo Pulmo no visible');
+          await page.locator('#playUserVideo').click();
+          if(!(await page.locator('#userVideoBox iframe').getAttribute('src')).includes('8j4YAcdaqDQ'))throw Error('Falta vídeo de usuaria');
+          await page.locator('#playOfficialVideo').click();
+          if(await page.locator('#userVideoBox iframe').count())throw Error('Vídeo previo no se cerró');
+          if(!(await page.locator('#officialVideoBox iframe').getAttribute('src')).includes('gb6gji5ln-w'))throw Error('Falta vídeo CONANP');
+          await page.locator('#close').click();
+          if(await page.locator('iframe').count())throw Error('No se detuvo el vídeo al cerrar la ficha');
+          if(errors.length)throw Error(errors.join(' | '));
+          console.log('PASS: 8 encuentros originales, ficha, ambos videos, limpieza reproductores');
+          await browser.close();
+          NODE
