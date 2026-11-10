@@ -57,7 +57,7 @@ jobs:
           python3 - <<'PY'
           import re, json, subprocess
           s=open('cabina-documental.html').read()
-          clips=json.loads(re.search(r'const species=(\\[[\\s\\S]*?\\]);\\nconst ',s).group(1))
+          clips=json.loads(re.search(r'const species=(\[[\s\S]*?\]);\nconst ',s).group(1))
           for c in clips:
               print('Verificando:',c['name'],flush=True)
               p=subprocess.run(['curl','-L','-sS','-o','/dev/null','-w','%{http_code} %{content_type} %{size_download}','--max-time','30','--range','0-16383',c['video']],capture_output=True,text=True)
