@@ -18,6 +18,10 @@ jobs:
       - run: |
           npm install --no-save playwright@1.56.1
           npx playwright install --with-deps chromium
+      - name: Instalar ffprobe
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
       - name: Comprobar cuatro videos HD descargados
         run: |
           set -e
