@@ -1,0 +1,56 @@
+name: EXPLORANDUM - comprobar cielo y cosmos
+on:
+  push:
+    paths:
+      - 'cielo-y-cosmos-baja-california.html'
+      - '.github/workflows/verificar-cielo-cosmos.yml'
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Comprobar fuentes y fotos reales
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('cielo-y-cosmos-baja-california.html').read_text()
+          for p in ['media/terrestre/golfo-nasa-satelite.jpg','media/terrestre/sierra-la-laguna-pinos.jpg']:
+            assert Path(p).is_file() and Path(p).stat().st_size>50000
+            assert p in s
+          assert s.count('class="station"')==4
+          assert 'science.nasa.gov' in s and 'id="skyQuestion"' in s
+          print('PASS: cuatro estaciones, fuentes NASA, cuaderno propio, sin costes externos')
+          PY
+      - name: Navegador movil y escritorio
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+          python3 -m http.server 8765 >/tmp/cosmos.log 2>&1 &
+          node --input-type=module <<'NODE'
+          import {chromium} from 'playwright';
+          const b=await chromium.launch({headless:true});
+          for(const v of [{width:1440,height:900},{width:390,height:844}]){
+            const p=await b.newPage({viewport:v});
+            const err=[];p.on('pageerror',e=>err.push(e.message));
+            await p.goto('http://127.0.0.1:8765/cielo-y-cosmos-baja-california.html',{waitUntil:'domcontentloaded'});
+            const chapters=await p.locator('.station').count();if(chapters!==4)throw Error('Incorrect chapters');
+            for(const id of ['vuelo','atmosfera','orbita','luna'])if(!await p.locator('#'+id).isVisible())throw Error('Section missing '+id);
+            await p.locator('[data-activity="flight"][data-answer="yes"]').click();
+            if(!(await p.locator('#flight-answer').innerText()).includes('sustentación'))throw Error('Flight interaction failed');
+            await p.locator('#altitude').fill('410');
+            if(!(await p.locator('#atmosphere-layer').innerText()).includes('Termosfera'))throw Error('Atmosphere slider failed');
+            await p.locator('[data-activity="moon"][data-answer="yes"]').click();
+            if(!(await p.locator('#moon-answer').innerText()).includes('1,28'))throw Error('Moon light calculation failed');
+            await p.locator('#skyQuestion').fill('¿Por qué flota una estación espacial?');
+            if(await p.locator('#skyQuestionForm button').isEnabled())throw Error('Fake AI enabled');
+            if(err.length)throw Error(err.join(' | '));
+            console.log('PASS',v.width,'full educational flow');
+            await p.close();
+          }
+          await b.close();
+          NODE
