@@ -32,6 +32,8 @@ jobs:
           const errs=[];p.on('pageerror',e=>errs.push(e.message));
           await p.goto('http://127.0.0.1:8765/cabina-video-real.html',{waitUntil:'domcontentloaded'});
           await p.locator('#begin').click();
+          await p.waitForFunction(()=>document.getElementById('moving').videoWidth>=640,null,{timeout:20000});
+          console.log('Primer video decodificado:',await p.locator('#moving').evaluate(v=>v.videoWidth+'x'+v.videoHeight));
           const n=await p.evaluate(()=>species.length);
           if(n!==4)throw Error('Se esperaban 4 escenas, hay '+n);
           for(let i=0;i<n;i++){
