@@ -1,0 +1,35 @@
+name: EXPLORANDUM - crear microvideos documentales
+on:
+  push:
+    paths:
+      - 'tools/generar_microvideos.py'
+      - '.github/workflows/generar-microvideos.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  render:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 28
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Preparar FFmpeg
+        run: |
+          ffmpeg -version | head -n 1
+      - name: Generar pequeños MP4 a partir de fotos documentales libres
+        run: |
+          python3 tools/generar_microvideos.py
+      - name: Validar vídeos y guardar los resultados
+        run: |
+          set -euo pipefail
+          test "$(find media/documental -name '*.mp4' | wc -l)" -eq 8
+          for f in media/documental/*.mp4; do
+            ffprobe -v error -select_streams v:0 -show_entries stream=width,height,codec_name -of default=nw=1 "$f"
+          done
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add media/documental/*.mp4
+          git commit -m "Publicar ocho microvideos documentales animados, con fotos acreditadas"
+          git push origin HEAD:main
