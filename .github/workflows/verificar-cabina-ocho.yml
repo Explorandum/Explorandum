@@ -1,0 +1,58 @@
+name: EXPLORANDUM - verificar cabina ocho escenas
+on:
+  push:
+    paths:
+      - 'cabina-video-real-ocho.html'
+      - '.github/workflows/verificar-cabina-ocho.yml'
+  workflow_dispatch:
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verificar MP4 y elementos
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,re,pathlib,subprocess
+          s=pathlib.Path('cabina-video-real-ocho.html').read_text()
+          m=re.search(r'const species=(\[[\s\S]*?\]);\nconst ',s)
+          if not m:raise SystemExit('No encuentro el catálogo de especies')
+          items=json.loads(m.group(1))
+          assert len(items)==8,len(items)
+          for item in items:
+              assert item['mode']=='real',item
+              assert 'photo' not in item, item['name']
+              p=pathlib.Path(item['video'])
+              assert p.exists() and p.stat().st_size>100000,(item['name'],p)
+              assert item['videoPage'].startswith('https://'),item['name']
+              print('VIDEO',item['name'],p.stat().st_size,flush=True)
+          assert 'fotografías animadas' not in s.lower() or 'no hay fotografías animadas' in s.lower()
+          print('PASS 8 encuentros con grabaciones reales verificadas')
+          PY
+      - name: Verificar navegación con Chromium
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+          python3 -m http.server 8765 >/tmp/site.log 2>&1 &
+          node --input-type=module <<'NODE'
+          import {chromium} from 'playwright';
+          const b=await chromium.launch({headless:true});
+          const p=await b.newPage({viewport:{width:1440,height:900}});
+          const errors=[];p.on('pageerror',e=>errors.push(e.message));
+          await p.goto('http://127.0.0.1:8765/cabina-video-real-ocho.html',{waitUntil:'domcontentloaded'});
+          await p.locator('#begin').click();
+          const initial=await p.locator('#name').innerText();
+          for(let i=0;i<8;i++){
+            const response=await p.evaluate(async()=>fetch(document.getElementById('moving').getAttribute('src')).then(r=>r.status));
+            if(response!==200)throw Error('Vídeo sin respuesta HTTP 200: '+response);
+            await p.locator('#next').click();
+          }
+          if((await p.locator('#name').innerText())!==initial)throw Error('La navegación no vuelve al origen');
+          await p.locator('#inspect').click();
+          if(!await p.locator('#brief').isVisible())throw Error('La ficha no abre');
+          if(errors.length)throw Error('Errores JavaScript: '+errors.join(' | '));
+          console.log('PASS ocho archivos MP4 accesibles y navegación funcional');
+          await b.close();
+          NODE
