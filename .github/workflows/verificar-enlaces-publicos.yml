@@ -13,7 +13,7 @@ jobs:
         run: |
           set -eu
           base='https://prepdiplo-web.github.io/Explorandum'
-          for path in '/' '/inmersion-documental.html' '/oceano-inmersivo-3d.html'; do
+          for path in '/' '/inmersion-documental.html' '/oceano-inmersivo-3d.html' '/cabina-documental.html'; do
             echo "Verificando: ${base}${path}"
             code=$(curl -L --retry 3 --retry-delay 3 --connect-timeout 15 -sS -o /tmp/explorandum-body -w '%{http_code}' "${base}${path}")
             echo "HTTP ${code}; bytes=$(wc -c </tmp/explorandum-body)"
