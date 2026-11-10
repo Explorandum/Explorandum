@@ -95,6 +95,8 @@ def comprobar():
     print(json.dumps(resumen, ensure_ascii=False, indent=2))
     if grandes:
         raise SystemExit("Hay activos incompatibles con el límite 25 MiB/archivo de Pages")
+    if enlaces_rotos:
+        raise SystemExit("Enlaces locales inexistentes: " + repr(enlaces_rotos[:20]))
     if not videos:
         raise SystemExit("No se detectaron vídeos: revisar el inventario antes de migrar")
 
