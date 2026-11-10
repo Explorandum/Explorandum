@@ -37,7 +37,9 @@ jobs:
           if(await page.locator('#scene img').count())throw Error('La cabina aún contiene fotografías');
           if(await page.locator('#context').count())throw Error('Sigue visible el cartel de localización');
           await page.locator('#prev').click();
+          await page.locator('#prev').click();
           if(!await page.locator('#moving').getAttribute('src').then(x=>x?.includes('media/documental/')))throw Error('No se selecciona microvideo local');
+          await page.locator('#next').click();
           await page.locator('#next').click();
           console.log('CLIPS:',JSON.stringify(clips));
           const first=await page.locator('#name').innerText();
