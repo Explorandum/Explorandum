@@ -15,6 +15,7 @@ header{height:55px;background:#051924;display:flex;justify-content:space-between
 #seaSunrays{position:absolute;inset:0;z-index:2;pointer-events:none;opacity:.14;background:repeating-conic-gradient(from 67deg at 19% -14%,transparent 0 6deg,#e7ffeb90 8deg 9deg,transparent 13deg 19deg);mask-image:linear-gradient(#000,transparent 68%);mix-blend-mode:screen}
 #glass{pointer-events:none;position:absolute;inset:0;z-index:3;background:linear-gradient(115deg,transparent 8%,#d7ffff08 12%,transparent 27%,transparent 75%,#c1ffff07 82%,transparent 95%);mix-blend-mode:screen}
 #hud{position:absolute;z-index:5;top:17px;left:clamp(16px,4vw,48px);right:200px;display:flex;gap:6px;flex-wrap:wrap;pointer-events:none}#hud span{background:#041c2bd6;border:1px solid #83b8c5;border-radius:8px;padding:7px 11px;font:700 11px system-ui;letter-spacing:.07em;box-shadow:0 3px 14px #0005}
+#guide{position:absolute;z-index:6;top:198px;right:clamp(10px,3vw,36px);width:160px;padding:9px 11px;border:1px solid #74a8b5;border-radius:11px;background:#041b2bdc;box-shadow:0 4px 20px #0008;font:700 11px/1.5 system-ui;color:#d9fff3;pointer-events:none}#guide small{display:block;color:#a7d2d3;font-size:10px;font-weight:500}#guide strong{display:block;font-size:12px;line-height:1.3;margin:3px 0}
 #miniWrap{position:absolute;right:clamp(10px,3vw,36px);top:17px;z-index:7;background:#041b2ade;border:1px solid #88b6c2;border-radius:13px;width:160px;height:170px;overflow:hidden;box-shadow:0 4px 24px #0009}#miniMap{width:100%;height:100%;display:block}
 #mission{position:absolute;z-index:5;top:28%;left:50%;transform:translate(-50%,-50%);pointer-events:none;text-align:center;text-shadow:0 3px 17px #00131f;width:min(80vw,600px);opacity:0;transition:opacity .5s}
 #mission.show{opacity:1}#mission strong{font:30px Georgia,serif;display:block}#mission small{letter-spacing:.1em;font-size:12px;color:#ccf6eb}
@@ -60,7 +61,7 @@ header{height:55px;background:#051924;display:flex;justify-content:space-between
 #credits{padding:15px 22px;background:#061924;color:#a5c1ca;font-size:12px}
 #fallback{position:absolute;inset:0;z-index:25;background:#041724f0;padding:25px;display:none;align-items:center;justify-content:center;text-align:center}#fallback.on{display:flex}
 #fallback div{max-width:500px}#fallback a{display:block;margin:12px}
-@media(max-width:780px){header{height:50px;padding:7px 13px}.brand{font-size:17px}nav a{font-size:11px}#world{height:calc(100dvh - 50px);min-height:600px}#hud{right:117px;top:9px;left:10px;gap:4px}#hud span{font-size:10px;padding:5px}#miniWrap{top:8px;right:9px;width:103px;height:113px}#window{border-width:15px}#controls{padding:7px 6px max(8px,env(safe-area-inset-bottom))}.buttons button{font-size:12px;min-height:38px;padding:7px 9px}#prompt{bottom:180px}#help{bottom:190px;left:10px;right:10px;max-width:none}#fieldbook{inset:5px 5px 180px;padding:13px}#fieldList{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.fieldCard img{height:85px}.fieldCard{min-height:145px}#infoBody{padding:15px}}
+@media(max-width:780px){header{height:50px;padding:7px 13px}.brand{font-size:17px}nav a{font-size:11px}#world{height:calc(100dvh - 50px);min-height:600px}#hud{right:117px;top:9px;left:10px;gap:4px}#hud span{font-size:10px;padding:5px}#miniWrap{top:8px;right:9px;width:103px;height:113px}#guide{top:126px;right:9px;width:115px;font-size:10px;padding:7px}#guide strong{font-size:11px}#window{border-width:15px}#controls{padding:7px 6px max(8px,env(safe-area-inset-bottom))}.buttons button{font-size:12px;min-height:38px;padding:7px 9px}#prompt{bottom:180px}#help{bottom:190px;left:10px;right:10px;max-width:none}#fieldbook{inset:5px 5px 180px;padding:13px}#fieldList{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.fieldCard img{height:85px}.fieldCard{min-height:145px}#infoBody{padding:15px}}
 @media(max-height:600px){#controls{padding-top:4px;padding-bottom:5px}.buttons button{padding:5px 9px;min-height:32px}#message{font-size:11px}}
 @media(prefers-reduced-motion:reduce){#sonarCircle.ping{animation:none}}
 </style>
@@ -73,6 +74,7 @@ header{height:55px;background:#051924;display:flex;justify-content:space-between
 <div id="reticle"></div><div id="sonarCircle"></div>
 <div id="hud"><span id="depth">PROFUNDIDAD · 12 m</span><span id="pressure">PRESIÓN · 2,2 atm</span><span id="heading">RUMBO · 000°</span><span id="speed">VELOCIDAD · 0</span><span id="habitat">HÁBITAT · ARRECIFE</span><span id="discovered">ENCUENTROS · 0 / 10</span></div>
 <div id="miniWrap"><canvas id="miniMap" width="160" height="170" aria-label="Mapa esquemático de encuentros"></canvas></div>
+<div id="guide"><small>PRÓXIMO DESCUBRIMIENTO</small><strong id="guideName">Buscando señales…</strong><span id="guideDistance">Orientación disponible</span></div>
 <div id="mission"><strong id="missionTitle">Bienvenidos al mar de Cortés</strong><small id="missionDesc">Explora, observa y descubre</small></div>
 <div id="prompt"><span id="nearText">Hay un encuentro cerca</span><button id="openNear">Observar</button></div>
 <div id="controls"><div id="message">W/A/S/D para desplazarte · Ratón pulsado para mirar · Q/E subir/bajar</div>
@@ -82,7 +84,7 @@ header{height:55px;background:#051924;display:flex;justify-content:space-between
 <button id="cruise">⏵ Crucero</button><button id="sonar">◎ Sonar</button><button id="lights">☀ Focos</button>
 <button id="book">◉ Especies</button><button id="quality">Calidad: Media</button><button id="inspect" disabled>Investigar</button><button id="full">⛶ Pantalla completa</button><button id="helpBtn">?</button>
 </div></div>
-<div id="help" hidden><h2>Pilotar el submarino</h2><p>W/S avanzan y retroceden; A/D se desplazan lateralmente. Arrastra el ratón sobre el ventanal para girar la cámara en cualquier dirección. Q/E ascienden y descienden. En pantallas táctiles, arrastra la vista y mantén pulsados los mandos.</p><p>El botón Crucero mantiene el movimiento; puedes tomar el control en cualquier momento. El sonar señala el encuentro más cercano. Acércate a unos 18 metros o elige una especie desde la guía de campo.</p><p>La fauna sigue rutas suavizadas; si un modelo contiene animaciones originales, se reproducen. Los demás emplean movimientos simulados, no una recreación biomecánica exacta.</p><button class="close" id="helpClose">Cerrar ayuda</button></div>
+<div id="help" hidden><h2>Pilotar el submarino</h2><p>W/S avanzan y retroceden; A/D se desplazan lateralmente. Arrastra el ratón sobre el ventanal para girar la cámara en cualquier dirección. Q/E ascienden y descienden. En pantallas táctiles, arrastra la vista y mantén pulsados los mandos.</p><p>El botón Crucero mantiene el movimiento; puedes tomar el control en cualquier momento. La brújula de descubrimientos te orienta hacia una ficha aún no explorada. El sonar señala el encuentro más cercano. Acércate a unos 18 metros o elige una especie desde la guía de campo.</p><p>La fauna sigue rutas suavizadas; si un modelo contiene animaciones originales, se reproducen. Los demás emplean movimientos simulados, no una recreación biomecánica exacta.</p><button class="close" id="helpClose">Cerrar ayuda</button></div>
 <div id="fieldbook" hidden><h2>Guía de campo · Mar de Cortés</h2><p>Conoce a los habitantes de este ecosistema y navega hasta las zonas de observación. Las fotografías científicas son reales; los modelos 3D son interpretaciones visuales.</p><div id="fieldList"></div><button class="close" id="bookClose">Volver al océano</button></div>
 <div id="info" hidden><div id="infoPhoto"><img id="specimen" alt=""><div class="photoPlace" id="place"></div></div><div id="infoBody"><span class="label" id="kind">EXPLORACIÓN CIENTÍFICA</span><h2 id="name"></h2><em id="latin"></em><p id="summary"></p><p id="detail"></p><blockquote><strong>Qué observar</strong><span id="observe"></span></blockquote><div class="filmblock" id="filmblock" hidden><strong>Documental real · fragmento breve</strong><p id="filmNote"></p><video id="clip" controls playsinline preload="none" aria-label="Fragmento documental marino"></video><p><a id="filmUrl" target="_blank" rel="noopener">Vídeo original, créditos y licencia</a></p></div><div class="meta"><a id="source" target="_blank" rel="noopener">Documentación científica</a> · <a id="photocredit" target="_blank" rel="noopener">Fotografía y licencia</a></div><div style="margin-top:17px"><button class="close" id="infoClose">Regresar a la cabina</button></div></div></div>
 <div id="loader"><div style="color:#b2e9e8;font-size:12px;letter-spacing:.22em">EXPLORANDUM · EXPEDICIÓN 3D</div><h1>Una ventana al acuario del mundo</h1><p>Un océano continuo para explorar desde una auténtica cabina de investigación, con modelos de fauna marina y encuentros científicos.</p><div id="loadingBar"><i id="progressFill"></i></div><p id="loadingText" style="font-size:13px">Preparando el escenario submarino…</p><button id="start" disabled>Comenzar inmersión</button><a href="submarino-v2.html" class="fallback">La versión cinematográfica V2 sigue disponible</a></div>
@@ -125,8 +127,8 @@ const LOCATIONS=[
 {name:/Tiburón ballena/i,x:4,z:82,depth:14}
 ];
 const POI=RECORDS.map((f,i)=>{const loc=LOCATIONS.find(x=>x.name.test(f.name))||{x:12,z:-100,depth:20};return {...f,wx:loc.x,wz:loc.z,wy:-loc.depth,idx:i}});
-let renderer,scene,camera,waterPlane,waterShader,seaBed,hemi,sun,headlight,modelStatus='',models=[],last=performance.now(),inWorld=false,playing=false,dragging=false,dragX=0,dragY=0,quality='medium',frame=0,lowFpsTicks=0,perfFrames=0,perfSeconds=0;
-const player={x:0,y:-13,z:125,yaw:0,pitch:-0.09,speed:0,cruise:false,lights:true,found:new Set(),near:-1};
+let renderer,scene,camera,waterPlane,waterShader,seaBed,hemi,sun,headlight,modelStatus='',models=[],causticShader=null,last=performance.now(),inWorld=false,playing=false,dragging=false,dragX=0,dragY=0,quality='medium',frame=0,lowFpsTicks=0,perfFrames=0,perfSeconds=0;
+const player={x:0,y:-13,z:125,yaw:0,pitch:-0.09,speed:0,velocityX:0,velocityZ:0,velocityY:0,cruise:false,lights:true,found:new Set(),near:-1};
 const held=new Set(),clock=new THREE.Clock();
 const move=new THREE.Vector3(),look=new THREE.Vector3(),tmp=new THREE.Vector3();
 let seed=221;function rand(){seed=(seed*1664525+1013904223)>>>0;return seed/4294967296}
@@ -150,7 +152,7 @@ function init(){
  headlight=new THREE.SpotLight(0xcafcf5,60,85,.47,.72,1.6);scene.add(headlight);scene.add(headlight.target);
  buildWorld();buildSchools();resize();
  const ro=new ResizeObserver(resize);ro.observe($('world'));window.addEventListener('resize',resize);
- loadModels();createFieldbook();wire();map();
+ loadModels();createFieldbook();wire();map();updateGuide();
  animate();
  $('progressFill').style.width='40%';$('loadingText').textContent='Escenario preparado. Se están cargando modelos marinos…';
  setTimeout(()=>{$('start').disabled=false;$('start').textContent='Comenzar inmersión';$('progressFill').style.width='85%'},900);
@@ -166,7 +168,22 @@ function buildWorld(){
  const texture=new THREE.CanvasTexture(texCanvas);texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.repeat.set(14,16);texture.colorSpace=THREE.SRGBColorSpace;texture.anisotropy=4;
  const sandURL='https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/sand_03/sand_03_diff_1k.jpg';
  new THREE.TextureLoader().load(sandURL,real=>{real.wrapS=real.wrapT=THREE.RepeatWrapping;real.repeat.set(18,20);real.colorSpace=THREE.SRGBColorSpace;real.anisotropy=4;if(seaBed&&seaBed.material){seaBed.material.map=real;seaBed.material.color.setHex(0xb4bdaf);seaBed.material.needsUpdate=true}},undefined,err=>console.warn('Se mantiene arena procedural',err));
- seaBed=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({map:texture,color:0x91b3a2,roughness:1,metalness:0,flatShading:false}));scene.add(seaBed);
+ const seabedMaterial=new THREE.MeshStandardMaterial({map:texture,color:0x91b3a2,roughness:1,metalness:0,flatShading:false});
+ // Soft procedural light ripples on sand, without flat projected pictures.
+ seabedMaterial.onBeforeCompile=shader=>{
+  shader.uniforms.seaTime={value:0};causticShader=shader;
+  shader.vertexShader='varying vec3 vSeaWorld;\n'+shader.vertexShader;
+  shader.vertexShader=shader.vertexShader.replace('#include <worldpos_vertex>','#include <worldpos_vertex>\nvSeaWorld=(modelMatrix*vec4(transformed,1.0)).xyz;');
+  shader.fragmentShader='varying vec3 vSeaWorld;\nuniform float seaTime;\n'+shader.fragmentShader;
+  shader.fragmentShader=shader.fragmentShader.replace('#include <dithering_fragment>',`
+    float c1=sin(vSeaWorld.x*0.36+seaTime*.24+sin(vSeaWorld.z*.25));
+    float c2=sin(vSeaWorld.z*.41-seaTime*.19+sin(vSeaWorld.x*.22));
+    float caustic=pow(max(0.0,c1*c2),6.0);
+    float shallow=clamp((vSeaWorld.y+57.0)/42.0,0.0,1.0);
+    gl_FragColor.rgb += vec3(.065,.11,.10)*caustic*shallow;
+    #include <dithering_fragment>`);
+ };
+ seaBed=new THREE.Mesh(geo,seabedMaterial);scene.add(seaBed);
  const rockGeo=new THREE.DodecahedronGeometry(1,2);const rockMat=new THREE.MeshStandardMaterial({color:0x667c72,roughness:.98,flatShading:false});
  const rocks=new THREE.InstancedMesh(rockGeo,rockMat,550);const dummy=new THREE.Object3D();
  for(let i=0;i<550;i++){
@@ -250,7 +267,7 @@ function createFieldbook(){
  const title=document.createElement('strong');title.textContent=f.name;const sub=document.createElement('small');sub.textContent=f.latin||f.category;btn.append(im,title,sub);btn.onclick=()=>{teleport(f);closeBook();};list.append(btn)}
 }
 function closeBook(){$('fieldbook').hidden=true;playing=true}
-function teleport(f){player.x=f.wx;player.z=f.wz+14;player.y=clamp(f.wy,-75,-5);player.y=Math.max(player.y,terrain(player.x,player.z)+4);player.yaw=0;player.pitch=0;player.cruise=false;$('cruise').classList.remove('is-on');notice(f.name,'Señal científica localizada. Acércate y pulsa Investigar.')}
+function teleport(f){player.x=f.wx;player.z=f.wz+14;player.y=clamp(f.wy,-75,-5);player.y=Math.max(player.y,terrain(player.x,player.z)+4);player.yaw=0;player.pitch=0;player.cruise=false;player.velocityX=player.velocityY=player.velocityZ=0;$('cruise').classList.remove('is-on');notice(f.name,'Señal científica localizada. Acércate y pulsa Investigar.')}
 function findNear(){
  let best=null,dist=Infinity;for(const f of POI){const d=Math.hypot(player.x-f.wx,player.z-f.wz,(player.y-f.wy)*.7);if(d<dist){best=f;dist=d}}
  player.near=dist<22?best.idx:-1;
@@ -268,6 +285,18 @@ function openInfo(i){if(i==null||i<0||i>=POI.length)return;const f=POI[i];player
  $('info').hidden=false;player.found.add(i);try{localStorage.setItem('explorandum-oceano3d-found',JSON.stringify([...player.found]))}catch(e){}
 }
 function closeInfo(){const clip=$('clip');clip.pause();$('info').hidden=true;playing=true}
+function updateGuide(){
+ const remaining=POI.filter(f=>!player.found.has(f.idx));
+ const candidates=remaining.length?remaining:POI;
+ let near=candidates[0],dist=Infinity;
+ for(const f of candidates){const d=Math.hypot(player.x-f.wx,player.z-f.wz,player.y-f.wy);if(d<dist){dist=d;near=f}}
+ if(!near)return;
+ $('guideName').textContent=near.name;
+ const targetAngle=Math.atan2(near.wx-player.x,-(near.wz-player.z));
+ const turn=Math.atan2(Math.sin(targetAngle-player.yaw),Math.cos(targetAngle-player.yaw));
+ const direction=Math.abs(turn)<.27?'De frente':turn>0?'Gira a la izquierda':'Gira a la derecha';
+ $('guideDistance').textContent=Math.round(dist)+' m · '+direction;
+}
 function map(){const c=$('miniMap'),ctx=c.getContext('2d'),w=160,h=170;ctx.clearRect(0,0,w,h);ctx.fillStyle='#062537';ctx.fillRect(0,0,w,h);
  ctx.strokeStyle='#4a99a466';ctx.lineWidth=1;for(let i=16;i<w;i+=27){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i,h);ctx.stroke()}for(let j=15;j<h;j+=26){ctx.beginPath();ctx.moveTo(0,j);ctx.lineTo(w,j);ctx.stroke()}
  const conv=(x,z)=>[80+x*.22,30+(125-z)*.28];
@@ -303,18 +332,28 @@ function animate(){
  if(lowFpsTicks>=2&&quality==='high'){quality='medium';renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.18));resize();$('quality').textContent='Calidad: Media';status('Calidad adaptada para mejorar la fluidez.');lowFpsTicks=0}
  }}
  if(playing){
- const forward=(held.has('forward')?1:0)-(held.has('back')?1:0)+(player.cruise?1:0);const side=(held.has('right')?1:0)-(held.has('left')?1:0);
+ const forward=clamp((held.has('forward')?1:0)-(held.has('back')?1:0)+(player.cruise?1:0),-1,1);const side=(held.has('right')?1:0)-(held.has('left')?1:0);
  const vertical=(held.has('up')?1:0)-(held.has('down')?1:0);
  player.yaw+=(held.has('turnRight')?1:0)*dt*.8-(held.has('turnLeft')?1:0)*dt*.8;
- const factor=(held.has('fast')?1.65:1);player.speed=forward*factor*9.5;const vx=Math.sin(player.yaw)*forward+Math.cos(player.yaw)*side;const vz=-Math.cos(player.yaw)*forward+Math.sin(player.yaw)*side;
- player.x=clamp(player.x+vx*dt*9.5*factor,-290,290);player.z=clamp(player.z+vz*dt*9.5*factor,-315,350);player.y=clamp(player.y+vertical*dt*11,-83,-1.2);
- const minHeight=terrain(player.x,player.z)+3.4;if(player.y<minHeight)player.y=minHeight;
+ const factor=held.has('fast')?1.65:1;
+ const intentX=(Math.sin(player.yaw)*forward+Math.cos(player.yaw)*side)*9.5*factor;
+ const intentZ=(-Math.cos(player.yaw)*forward+Math.sin(player.yaw)*side)*9.5*factor;
+ const response=1-Math.exp(-dt*3.4);
+ player.velocityX+=(intentX-player.velocityX)*response;
+ player.velocityZ+=(intentZ-player.velocityZ)*response;
+ player.velocityY+=(vertical*8-player.velocityY)*(1-Math.exp(-dt*4.5));
+ player.x=clamp(player.x+player.velocityX*dt,-290,290);
+ player.z=clamp(player.z+player.velocityZ*dt,-315,350);
+ player.y=clamp(player.y+player.velocityY*dt,-83,-1.2);
+ player.speed=Math.hypot(player.velocityX,player.velocityZ);
+ const minHeight=terrain(player.x,player.z)+3.4;if(player.y<minHeight){player.y=minHeight;player.velocityY=Math.max(0,player.velocityY)}
  camera.position.set(player.x,player.y,player.z);camera.rotation.order='YXZ';camera.rotation.y=player.yaw;camera.rotation.x=player.pitch;
  const depth=-player.y,light=Math.exp(-depth/37),color=new THREE.Color().setRGB(.01+light*.15,.055+light*.34,.09+light*.47);
  scene.background=color;scene.fog=new THREE.FogExp2(color,.0062+depth*.00018);
  hemi.intensity=.36+2.8*light;sun.intensity=.1+3.1*light;headlight.intensity=player.lights?50:0;headlight.position.copy(camera.position);look.set(Math.sin(player.yaw)*Math.cos(player.pitch),Math.sin(player.pitch),-Math.cos(player.yaw)*Math.cos(player.pitch));headlight.target.position.copy(camera.position).addScaledVector(look,20);
  if(waterPlane){waterPlane.material.opacity=.22+Math.sin(t*.25)*.03;waterPlane.position.y=.1+Math.sin(t*.5)*.14}
  if(bladeMat?.userData?.shader)bladeMat.userData.shader.uniforms.time.value=t;
+ if(causticShader)causticShader.uniforms.seaTime.value=t;
  models.forEach((m,i)=>{
  const {anchor,spec,phase,offset}=m,q=t*spec.speed+phase+offset;
  const big=/Ballena/.test(spec.label),radius=big?18:8,drift=big?5:2.5;
@@ -335,7 +374,7 @@ function animate(){
  $('depth').textContent='PROFUNDIDAD · '+depth.toFixed(1)+' m';$('pressure').textContent='PRESIÓN ≈ '+(1+depth/10.3).toFixed(1).replace('.',',')+' atm';$('heading').textContent='RUMBO · '+String((Math.round(player.yaw*180/Math.PI)%360+360)%360).padStart(3,'0')+'°';
  $('speed').textContent='VELOCIDAD · '+Math.abs(player.speed).toFixed(1);$('discovered').textContent='ENCUENTROS · '+player.found.size+' / '+POI.length;
  $('habitat').textContent='HÁBITAT · '+(depth<7?'SUPERFICIE':depth<25?'AGUAS SOMERAS':depth<50?'ARRECIFE / TALUD':'AGUAS PROFUNDAS');
- if(frame%12===0){const f=findNear();if(frame%36===0)map();if(f.dist<22)status('Próximo avistamiento: '+f.best.name+'. Pulsa Investigar.')}
+ if(frame%12===0){const f=findNear();if(frame%36===0){map();updateGuide();}if(f.dist<22)status('Próximo avistamiento: '+f.best.name+'. Pulsa Investigar.')}
  }
  // Render also while intro is visible so 3D loads behind it
  renderer.render(scene,camera);
