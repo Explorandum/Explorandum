@@ -90,7 +90,7 @@ header{height:55px;background:#051924;display:flex;justify-content:space-between
 <div id="loader"><div style="color:#b2e9e8;font-size:12px;letter-spacing:.22em">EXPLORANDUM · EXPEDICIÓN 3D</div><h1>El arrecife, sin filtros de dibujos animados</h1><p>Escenario 3D con fototexturas de corales reales de Cabo Pulmo, fauna recreada y encuentros científicos. Las superficies fotográficas no son escaneos 3D.</p><div id="loadingBar"><i id="progressFill"></i></div><p id="loadingText" style="font-size:13px">Preparando el escenario submarino…</p><button id="start" disabled>Comenzar inmersión</button><a href="submarino-v2.html" class="fallback">La versión cinematográfica V2 sigue disponible</a></div>
 <div id="fallback"><div><h2>Este navegador no puede mostrar el océano 3D</h2><p id="errorMsg">La simulación necesita WebGL y conexión para descargar los modelos.</p><a href="submarino-v2.html">Abrir Submarino V2</a></div></div>
 </main>
-<footer id="credits">EXPLORANDUM · Escenario 3D con fotografías adaptadas a relieve de Cabo Pulmo y Los Cabos, Diego Delso (Poco a poco), CC BY-SA 4.0. <a href='https://commons.wikimedia.org/wiki/User:Poco_a_poco' target='_blank' rel='noopener'>Autor y licencia</a>. No es fotogrametría ni cartografía real. Fauna ilustrativa y especies documentadas del mar de Cortés. No es batimetría real ni predice avistamientos. Los modelos marinos GLB son CC0 de <a href="https://3dassets.dev/packs/ocean-giants-kit" target="_blank" rel="noopener">3DAssets.dev</a> y <a href="https://3dassets.dev/packs/open-ocean-and-deep-sea-life" target="_blank" rel="noopener">Ocean Animals</a>. Las fichas identifican el origen de las fotografías reales y distinguen los vídeos documentales de las recreaciones.</footer>
+<footer id="credits">EXPLORANDUM · Escenario 3D con fotografías adaptadas a relieve de Cabo Pulmo y Los Cabos, Diego Delso (Poco a poco), CC BY-SA 4.0. <a href='https://commons.wikimedia.org/wiki/User:Poco_a_poco' target='_blank' rel='noopener'>Autor y licencia</a>. Fuentes de las imágenes: <a href="https://commons.wikimedia.org/wiki/File:Coral_(Pocillopora_verrucosa),_Cabo_Pulmo,_Baja_California,_México,_2024-12-19,_DD_29.jpg" target="_blank" rel="noopener">Coral Cabo Pulmo</a> · <a href="https://commons.wikimedia.org/wiki/File:Coral_(Pocillopora_verrucosa),_Los_Cabos,_Baja_California,_México,_2024-12-17,_DD_78.jpg" target="_blank" rel="noopener">Coral Los Cabos</a> · <a href="https://commons.wikimedia.org/wiki/File:Coral_sol_(Tubastraea_coccinea),_Cabo_Pulmo,_Baja_California,_México,_2024-12-19,_DD_22.jpg" target="_blank" rel="noopener">Coral sol</a>. Fotografías adaptadas a mallas curvas. No es fotogrametría ni cartografía real. Fauna ilustrativa y especies documentadas del mar de Cortés. No es batimetría real ni predice avistamientos. Los modelos marinos GLB son CC0 de <a href="https://3dassets.dev/packs/ocean-giants-kit" target="_blank" rel="noopener">3DAssets.dev</a> y <a href="https://3dassets.dev/packs/open-ocean-and-deep-sea-life" target="_blank" rel="noopener">Ocean Animals</a>. Las fichas identifican el origen de las fotografías reales y distinguen los vídeos documentales de las recreaciones.</footer>
 <script type="module">
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
@@ -142,7 +142,7 @@ let noticeTimer=0;function notice(title,subtitle=''){const b=$('mission');$('mis
 function init(){
  const canvas=$('sea');
  renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance'});
- renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.18));
+ renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));
  renderer.outputColorSpace=THREE.SRGBColorSpace;
  renderer.toneMapping=THREE.ACESFilmicToneMapping;
  renderer.toneMappingExposure=1.15;
@@ -248,6 +248,7 @@ function createHeroReef(rockMat){
 }
 function createPhotographicReef(rockMat){
  // Fotografías CC BY-SA de organismos reales sobre relieve 3D: no fotogrametría.
+ window.__photoReef={loaded:0,failed:0};
  const photos=[
  {file:'Coral (Pocillopora verrucosa), Cabo Pulmo, Baja California, México, 2024-12-19, DD 29.jpg',x:-17,z:64,w:19,h:11,angle:.12},
  {file:'Coral (Pocillopora verrucosa), Los Cabos, Baja California, México, 2024-12-17, DD 78.jpg',x:20,z:52,w:17,h:10,angle:-.34},
@@ -259,7 +260,7 @@ function createPhotographicReef(rockMat){
   const u=(x-127.5)/127.5,v=(y-127.5)/127.5;
   const edge=Math.sqrt(u*u*.88+v*v*1.12)+.055*Math.sin(x*.12)+.045*Math.cos(y*.18+x*.09);
   const a=clamp((1.04-edge)*6,0,1),i=(y*256+x)*4;
-  pixels.data[i]=pixels.data[i+1]=pixels.data[i+2]=255;pixels.data[i+3]=Math.round(a*255);
+  pixels.data[i]=pixels.data[i+1]=pixels.data[i+2]=Math.round(a*255);pixels.data[i+3]=255;
  }
  ctx.putImageData(pixels,0,0);const mask=new THREE.CanvasTexture(alphaCanvas),photoLoader=new THREE.TextureLoader();
  for(const f of photos){
@@ -273,9 +274,9 @@ function createPhotographicReef(rockMat){
   }
   geo.computeVertexNormals();
   const mat=new THREE.MeshStandardMaterial({color:0xffffff,roughness:.95,metalness:0,transparent:true,alphaMap:mask,side:THREE.DoubleSide,depthWrite:false});
-  const cliff=new THREE.Mesh(geo,mat);group.add(cliff);scene.add(group);
+  const cliff=new THREE.Mesh(geo,mat);cliff.visible=false;group.add(cliff);scene.add(group);
   const url='https://commons.wikimedia.org/wiki/Special:Redirect/file/'+encodeURIComponent(f.file)+'?width=1920';
-  photoLoader.load(url,tex=>{tex.colorSpace=THREE.SRGBColorSpace;tex.anisotropy=Math.min(renderer.capabilities.getMaxAnisotropy(),8);mat.map=tex;mat.needsUpdate=true},undefined,()=>{cliff.visible=false;console.warn('Fototextura no disponible: '+f.file)});
+  photoLoader.load(url,tex=>{tex.colorSpace=THREE.SRGBColorSpace;tex.anisotropy=Math.min(renderer.capabilities.getMaxAnisotropy(),8);mat.map=tex;mat.needsUpdate=true;cliff.visible=true;window.__photoReef.loaded++},undefined,()=>{window.__photoReef.failed++;cliff.visible=false;console.warn('Fototextura no disponible: '+f.file)});
  }
 }
 function createCorals(){
