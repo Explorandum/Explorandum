@@ -30,6 +30,8 @@ jobs:
           assert 'GOES-18%20GEOcolor-June-702022.png.webp' in s
           assert 'Misión 07' in s
           assert all(x in s for x in ['birdEvidence','wetlandChoice','weatherEvidence','saveFieldNotes','copyFieldNotes'])
+          assert 'Observatorio_de_San_Pedro_Martir.jpg' in s and 'Cbojorquez75' in s
+          assert 'pronatura-noroeste.org' in s and 'trackingEvidence' in s
           assert 'science.nasa.gov' in s and 'id="skyQuestion"' in s
           print('PASS: cuatro estaciones, aves distintas, NASA unica, cuaderno propio')
           PY
@@ -64,6 +66,11 @@ jobs:
             if(!(await p.locator('#lyResult').innerText()).includes('250 años'))throw Error('Light travel activity failed');
             await p.locator('[data-activity="migration"][data-answer="yes"]').click();
             if(!(await p.locator('#migration-answer').innerText()).includes('paradas'))throw Error('Migration activity failed');
+            await p.locator('[data-activity="tracking"][data-answer="yes"]').click();
+            if(!(await p.locator('#tracking-answer').innerText()).includes('detecciones'))throw Error('Motus interpretation failed');
+            await p.locator('#trackingEvidence').fill('Fuente Pronatura 2026');
+            await p.locator('#saveTracking').click();
+            if(!(await p.locator('#trackingSaveMessage').innerText()).includes('guardada'))throw Error('Motus notebook save failed');
             await p.locator('#lightPollution').fill('90');
             if(!(await p.locator('#observatoryResult').innerText()).includes('iluminación artificial'))throw Error('Observatory experiment failed');
             await p.locator('#skyQuestion').fill('¿Por qué flota una estación espacial?');
