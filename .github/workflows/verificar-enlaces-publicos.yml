@@ -13,7 +13,7 @@ jobs:
         run: |
           set -eu
           base='https://prepdiplo-web.github.io/Explorandum'
-          for path in '/' '/inmersion-documental.html' '/oceano-inmersivo-3d.html' '/cabina-documental.html' '/cabina-video-real.html' '/media/real/tiburon-ballena.mp4' '/media/real/arrecife-real.mp4' '/media/real/ballena-jorobada.mp4' '/media/real/lobo-marino.mp4' '/cabina-video-real-cinco.html' '/media/real/tortuga-marina.mp4' '/cabina-video-real-ocho.html' '/cabina-dos-mares.html' '/cabina-nueve-descubrimientos.html' '/media/real/tiburon-zorro-real.mp4' '/media/real/ballena-jorobada-azul.mp4' '/media/real/bosque-algas.mp4' '/media/real/ctenoforo-california.mp4' '/media/real/medusa-oceano-profundo.mp4' '/media/real/medusa-sin-cartela.mp4' '/cabina-once-descubrimientos.html'; do
+          for path in '/' '/inmersion-documental.html' '/oceano-inmersivo-3d.html' '/cabina-documental.html' '/cabina-video-real.html' '/media/real/tiburon-ballena.mp4' '/media/real/arrecife-real.mp4' '/media/real/ballena-jorobada.mp4' '/media/real/lobo-marino.mp4' '/cabina-video-real-cinco.html' '/media/real/tortuga-marina.mp4' '/cabina-video-real-ocho.html' '/cabina-dos-mares.html' '/cabina-nueve-descubrimientos.html' '/media/real/tiburon-zorro-real.mp4' '/media/real/ballena-jorobada-azul.mp4' '/media/real/bosque-algas.mp4' '/media/real/ctenoforo-california.mp4' '/media/real/medusa-oceano-profundo.mp4' '/media/real/medusa-sin-cartela.mp4' '/cabina-once-descubrimientos.html' '/cabina-once-preguntas.html'; do
             echo "Verificando: ${base}${path}"
             code=$(curl -L --retry 3 --retry-delay 3 --connect-timeout 15 -sS -o /tmp/explorandum-body -w '%{http_code}' "${base}${path}")
             echo "HTTP ${code}; bytes=$(wc -c </tmp/explorandum-body)"
