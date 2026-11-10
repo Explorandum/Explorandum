@@ -1,0 +1,48 @@
+name: EXPLORANDUM - comprobar arrecife cinematografico
+on:
+  push:
+    paths:
+      - 'oceano-cinematografico.html'
+      - '.github/workflows/verificar-oceano-cinematografico.yml'
+  workflow_dispatch:
+jobs:
+  visual:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Preparar Chromium
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Probar oceano 3D y texturas fotograficas
+        run: |
+          python3 -m http.server 8765 >/tmp/explorandum-film-http.log 2>&1 &
+          node --input-type=module <<'NODE'
+          import {chromium} from 'playwright';
+          const browser=await chromium.launch({headless:true,args:['--enable-webgl','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
+          const page=await browser.newPage({viewport:{width:1440,height:900},deviceScaleFactor:1});
+          const errors=[];page.on('pageerror',e=>errors.push(e.message));
+          page.on('console',m=>{if(m.type()==='error')errors.push(m.text())});
+          await page.goto('http://127.0.0.1:8765/oceano-cinematografico.html',{waitUntil:'domcontentloaded',timeout:30000});
+          await page.locator('#start:not([disabled])').waitFor({timeout:25000});
+          await page.locator('#start').click();
+          await page.waitForTimeout(10000);
+          const report=await page.evaluate(()=>({loaded:window.__photoReef?.loaded??0,failed:window.__photoReef?.failed??0,depth:document.getElementById('depth')?.textContent,canvas:!!document.querySelector('#sea'),cards:document.querySelectorAll('.fieldCard').length}));
+          await page.screenshot({path:'/tmp/explorandum-cinematografico.png'});
+          console.log(JSON.stringify({report,errors},null,2));
+          await browser.close();
+          if(report.cards<8)throw Error('Perdidas fichas cientificas');
+          if(report.loaded<1)throw Error('Ninguna textura fotografica se ha cargado; revisar CORS y URLs');
+          if(errors.some(x=>/WebGLProgram|Shader Error|SyntaxError|ReferenceError/.test(x)))throw Error('Error critico: '+errors.join(' | '));
+          NODE
+      - name: Guardar captura
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: explorandum-arrecife-cinematografico
+          path: /tmp/explorandum-cinematografico.png
+          if-no-files-found: ignore
