@@ -1,0 +1,58 @@
+name: EXPLORANDUM - comprobar once descubrimientos
+on:
+  push:
+    paths:
+      - 'cabina-once-descubrimientos.html'
+      - '.github/workflows/verificar-cabina-once.yml'
+  workflow_dispatch:
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verificar catálogo científico y once videos originales
+        run: |
+          python3 - <<'PY'
+          import pathlib,re,json
+          text=pathlib.Path('cabina-once-descubrimientos.html').read_text()
+          a=json.loads(re.search(r'const species=(\[[\s\S]*?\]);\nconst ',text).group(1))
+          assert len(a)==11
+          for x in a:
+            p=pathlib.Path(x['video'])
+            assert p.is_file() and p.stat().st_size>100000,(x['name'],p)
+            assert x['videoPage'].startswith('https://')
+            assert x['source'].startswith('https://')
+          assert '7555072' in text and '5607745' in text
+          assert '8j4YAcdaqDQ' in text
+          print('PASS: 11 secuencias originales, sus fichas y video coral',flush=True)
+          PY
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Probar navegación y fichas en navegador
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+          python3 -m http.server 8765 >/tmp/test-site.log 2>&1 &
+          node --input-type=module <<'NODE'
+          import {chromium} from 'playwright';
+          const b=await chromium.launch({headless:true});
+          const p=await b.newPage();
+          let errs=[];p.on('pageerror',e=>errs.push(e.message));
+          await p.goto('http://127.0.0.1:8765/cabina-once-descubrimientos.html',{waitUntil:'domcontentloaded'});
+          await p.locator('#begin').click();
+          const first=await p.locator('#name').innerText();
+          let visited=[];
+          for(let i=0;i<11;i++){
+            visited.push(await p.locator('#name').innerText());
+            await p.locator('#next').click();
+          }
+          if((await p.locator('#name').innerText())!==first)throw Error('Ciclo de navegación incompleto');
+          if(!visited.some(x=>x.includes('Manta'))||!visited.some(x=>x.includes('Pinnípedos')))throw Error('No aparecen animales nuevos');
+          await p.locator('#inspect').click();
+          if(!await p.locator('#geoText').isVisible())throw Error('Ficha no visible');
+          if(errs.length)throw Error('JS: '+errs.join(' | '));
+          console.log('PASS: 11 encuentros navegables y fichas operativas');
+          await b.close();
+          NODE
