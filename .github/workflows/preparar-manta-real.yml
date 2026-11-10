@@ -1,0 +1,30 @@
+name: EXPLORANDUM - filmar manta real HD
+on:
+  push:
+    paths:
+      - 'tools/preparar_manta_real.py'
+      - '.github/workflows/preparar-manta-real.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  video:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Preparar FFmpeg
+        run: python3 -m pip install --break-system-packages -q imageio-ffmpeg
+      - name: Crear fragmento de manta real
+        run: python3 tools/preparar_manta_real.py
+      - name: Verificar y conservar original transformado
+        run: |
+          set -euo pipefail
+          test -s media/real/manta-oceanica-real.mp4
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add media/real/manta-oceanica-real.mp4
+          git commit -m "Guardar video autentico de manta oceánica HD"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
