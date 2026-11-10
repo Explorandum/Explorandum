@@ -1,0 +1,58 @@
+name: EXPLORANDUM - validar nueve descubrimientos
+on:
+  push:
+    paths:
+      - 'cabina-nueve-descubrimientos.html'
+      - '.github/workflows/verificar-cabina-nueve.yml'
+  workflow_dispatch:
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Comprobar catálogo y MP4
+        run: |
+          python3 - <<'PY'
+          import pathlib,re,json
+          s=pathlib.Path('cabina-nueve-descubrimientos.html').read_text()
+          a=json.loads(re.search(r'const species=(\[[\s\S]*?\]);\nconst ',s).group(1))
+          assert len(a)==9
+          for item in a:
+            p=pathlib.Path(item['video'])
+            assert p.exists() and p.stat().st_size>100000, (item['name'],p)
+            assert item['videoPage'].startswith('https://'),item['name']
+          shark=a[1]
+          assert shark['latin']=='Alopias pelagicus'
+          assert shark['video']=='media/real/tiburon-zorro-real.mp4'
+          assert '8j4YAcdaqDQ' in s
+          assert 'gb6gji5ln-w' in s
+          print('PASS: 9 videos auténticos con fuente, 2 videos en ficha coralina')
+          PY
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verificar navegación con Chromium
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+          python3 -m http.server 8765 >/tmp/explorandum.log 2>&1 &
+          node --input-type=module <<'NODE'
+          import {chromium} from 'playwright';
+          const b=await chromium.launch({headless:true});
+          const p=await b.newPage();
+          const errors=[];p.on('pageerror',e=>errors.push(e.message));
+          await p.goto('http://127.0.0.1:8765/cabina-nueve-descubrimientos.html',{waitUntil:'domcontentloaded'});
+          await p.locator('#begin').click();
+          await p.locator('#next').click();
+          if(!(await p.locator('#name').innerText()).includes('Tiburón zorro'))throw Error('No se navega a tiburón zorro');
+          await p.locator('#inspect').click();
+          if(!await p.locator('#geoText').isVisible())throw Error('Falta ficha');
+          await p.locator('#close').click();
+          await p.locator('#next').click();
+          await p.locator('#inspect').click();
+          if(!await p.locator('#coralExtra').isVisible())throw Error('Faltan materiales complementarios');
+          if(errors.length)throw Error(errors.join('; '));
+          console.log('PASS: navegación y fichas sin errores JavaScript');
+          await b.close();
+          NODE
