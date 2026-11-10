@@ -1,0 +1,33 @@
+name: EXPLORANDUM - ballena jorobada azul real
+on:
+  push:
+    paths:
+      - 'tools/preparar_ballena_azul.py'
+      - '.github/workflows/preparar-ballena-azul.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  prepare:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Instalar FFmpeg autocontenido
+        run: python3 -m pip install --break-system-packages -q imageio-ffmpeg
+      - name: Transcodificar ballena real azul
+        run: python3 tools/preparar_ballena_azul.py
+      - name: Validar y publicar vídeo
+        run: |
+          set -euo pipefail
+          test -s media/real/ballena-jorobada-azul.mp4
+          test "$(stat -c%s media/real/ballena-jorobada-azul.mp4)" -gt 300000
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add media/real/ballena-jorobada-azul.mp4
+          git commit -m "Publicar ballena jorobada real en aguas azules HD"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
