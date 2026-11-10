@@ -5,6 +5,9 @@ on:
       - 'cielo-y-cosmos-baja-california.html'
       - '.github/workflows/verificar-cielo-cosmos.yml'
   workflow_dispatch:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   test:
     runs-on: ubuntu-24.04
