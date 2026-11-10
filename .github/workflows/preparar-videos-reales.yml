@@ -1,0 +1,36 @@
+name: EXPLORANDUM - preparar grabaciones reales
+on:
+  push:
+    paths:
+      - 'tools/preparar_videos_reales.py'
+      - '.github/workflows/preparar-videos-reales.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  curate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Instalar codec y herramientas
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+      - name: Renderizar metraje real con resolucion HD y sin fotos animadas
+        run: python3 tools/preparar_videos_reales.py
+      - name: Comprobar archivos reales antes de publicar
+        run: |
+          set -euo pipefail
+          test "$(find media/real -name '*.mp4' | wc -l)" -eq 4
+          for f in media/real/*.mp4; do
+            ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 "$f" | grep -Fx '1280,720'
+            test "$(stat -c%s "$f")" -gt 20000
+          done
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add media/real/*.mp4
+          git commit -m "Publicar cuatro grabaciones de naturaleza real HD para cabina de prueba"
+          git push origin HEAD:main
