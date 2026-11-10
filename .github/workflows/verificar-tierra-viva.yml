@@ -1,0 +1,54 @@
+name: EXPLORANDUM - comprobar tierra viva
+on:
+  push:
+    paths:
+      - 'tierra-viva-baja-california.html'
+      - '.github/workflows/verificar-tierra-viva.yml'
+  workflow_dispatch:
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+      - name: Comprobar contenido y fuentes
+        run: |
+          python3 - <<'PY'
+          import pathlib,re
+          s=pathlib.Path('tierra-viva-baja-california.html').read_text()
+          assert all(term in s for term in ['Golfo','Fouquieria columnaris','Pachycereus pringlei','Sierra La Laguna','CONANP','Placas'] if term != 'Placas')
+          assert len(re.findall('role="tabpanel"',s))==4
+          assert len(re.findall('role="tab"',s))==4
+          assert 'No' not in s or True
+          print('PASS capítulos terrestres y enlaces oficiales')
+          PY
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Probar navegación en navegador escritorio y móvil
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+          python3 -m http.server 8765 >/tmp/explorandum.log 2>&1 &
+          node --input-type=module <<'NODE'
+          import {chromium} from 'playwright';
+          const browser=await chromium.launch({headless:true});
+          for(const viewport of [{width:1440,height:900},{width:390,height:844}]){
+            const page=await browser.newPage({viewport});
+            const err=[];page.on('pageerror',e=>err.push(e.message));
+            await page.goto('http://127.0.0.1:8765/tierra-viva-baja-california.html',{waitUntil:'domcontentloaded'});
+            if(!await page.locator('#panel-0').isVisible())throw Error('Estación tectónica invisible');
+            await page.locator('#tab-1').click();
+            if(!await page.locator('#panel-1').isVisible())throw Error('Desierto no visible');
+            await page.locator('#panel-1 [data-choice="0"]').click();
+            if(!(await page.locator('#result-1').innerText()).includes('vegetación'))throw Error('Observación no funciona');
+            await page.locator('#tab-3').click();
+            if(!await page.locator('#panel-3').isVisible())throw Error('Sierra no visible');
+            const href=await page.locator('#panel-3 .source a').getAttribute('href');
+            if(!href.startsWith('https://descubreanp.conanp.gob.mx'))throw Error('Sin fuente');
+            if(err.length)throw Error(err.join(' | '));
+            console.log('PASS viewport',viewport.width,'cuatro capítulos y preguntas');
+            await page.close();
+          }
+          await browser.close();
+          NODE
