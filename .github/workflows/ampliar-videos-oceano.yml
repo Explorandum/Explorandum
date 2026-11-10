@@ -1,0 +1,38 @@
+name: EXPLORANDUM - nuevas escenas reales
+on:
+  push:
+    paths:
+      - 'tools/ampliar_videos_oceano.py'
+      - '.github/workflows/ampliar-videos-oceano.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  render:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Instalar FFmpeg
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+      - name: Descargar y preparar vídeos originales
+        run: python3 tools/ampliar_videos_oceano.py
+      - name: Validar calidad técnica y publicar
+        run: |
+          set -euo pipefail
+          for name in ballena-madre-cria raya-comun morena-aleta-amarilla ctenoforo-california medusa-oceano-profundo; do
+            f="media/real/$name.mp4"
+            test -s "$f"
+            ffprobe -v error -select_streams v:0 -show_entries stream=codec_name,width,height -of csv=p=0 "$f" | grep -Fx 'h264,1280,720'
+          done
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add media/real/*.mp4
+          git commit -m "Añadir cinco escenas marinas reales HD sin fotos animadas"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
