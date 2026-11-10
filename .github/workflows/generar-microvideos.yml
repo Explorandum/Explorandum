@@ -17,6 +17,8 @@ jobs:
           persist-credentials: true
       - name: Preparar FFmpeg
         run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
           ffmpeg -version | head -n 1
       - name: Generar pequeños MP4 a partir de fotos documentales libres
         run: |
