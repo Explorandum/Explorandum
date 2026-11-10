@@ -1,0 +1,43 @@
+name: EXPLORANDUM - imagenes geologicas y bosque reales
+on:
+  push:
+    paths:
+      - '.github/workflows/imagenes-tierra-reales.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  photos:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Obtener imagenes originales con licencia comprobada
+        run: |
+          set -euo pipefail
+          mkdir -p media/terrestre
+          curl --fail -L --retry 3 --max-time 75 -A 'ExplorandumEducational/1.0 (Wikimedia Commons attribution)' \
+            'https://commons.wikimedia.org/wiki/Special:FilePath/Gulf_of_California.jpg?width=1280' \
+            -o media/terrestre/golfo-nasa-satelite.jpg
+          curl --fail -L --retry 3 --max-time 75 -A 'ExplorandumEducational/1.0 (Wikimedia Commons attribution)' \
+            'https://commons.wikimedia.org/wiki/Special:FilePath/Pinus_lagunae,_Sierra_La_Laguna,_Baja_California_Sur_03.jpg?width=1280' \
+            -o media/terrestre/sierra-la-laguna-pinos.jpg
+          file media/terrestre/*.jpg
+          python3 - <<'PY'
+          from pathlib import Path
+          for name in ['golfo-nasa-satelite.jpg','sierra-la-laguna-pinos.jpg']:
+            p=Path('media/terrestre')/name
+            assert p.read_bytes()[:3]==b'\xff\xd8\xff',(name,'not JPEG')
+            assert p.stat().st_size>50000,(name,'too small')
+            print('VERIFIED',name,p.stat().st_size)
+          PY
+      - name: Publicar imagenes internas sin enlaces rotos
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add media/terrestre/golfo-nasa-satelite.jpg media/terrestre/sierra-la-laguna-pinos.jpg
+          git commit -m 'Añadir fotografia satelital NASA y pinos de Sierra La Laguna a Tierra Viva'
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
