@@ -29,8 +29,8 @@ def media_info(file):
     md5=__import__('hashlib').md5(name.encode("utf8")).hexdigest()
     path="/".join((md5[0],md5[:2],urllib.parse.quote(name,safe="(),-._")))
     candidates=[
-        "https://upload.wikimedia.org/wikipedia/commons/transcoded/"+path+"/720p.vp9.webm",
-        "https://upload.wikimedia.org/wikipedia/commons/transcoded/"+path+"/1080p.vp9.webm"
+        "https://upload.wikimedia.org/wikipedia/commons/transcoded/"+path+"/"+urllib.parse.quote(name,safe="(),-._")+".720p.vp9.webm",
+        "https://upload.wikimedia.org/wikipedia/commons/transcoded/"+path+"/"+urllib.parse.quote(name,safe="(),-._")+".1080p.vp9.webm"
     ]
     if info["size"]<=95*1024*1024:
         return info["url"],info["size"],candidates
