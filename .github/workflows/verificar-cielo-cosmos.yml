@@ -19,7 +19,7 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
           s=Path('cielo-y-cosmos-baja-california.html').read_text()
-                    assert s.count('class="station"')==4
+          assert s.count('class="station"')==4
           assert 'Pelicans_in_flight.jpg' in s and 'Brown_pelican_' in s
           assert 'class="skyroute"' in s
           assert all(x in s for x in ['Guerrero Negro','GOES-18','San Pedro Mártir','seaTemp','lightPollution'])
