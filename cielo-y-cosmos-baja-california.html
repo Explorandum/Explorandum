@@ -319,6 +319,27 @@ body{background:linear-gradient(180deg,#031324 0%,#073D55 50%,#031324 100%)!impo
 .intro .kicker,.expedition>.kicker,.extra-labs>.kicker,.fieldwork>.kicker,.tracking>.kicker,.bird-map-expedition>.kicker{color:#91F8EE!important}
 .foot{background:#031324!important;color:#BFE5EA!important;border-top-color:#28728B!important}
 .foot a{color:#8BE6E9!important}
+/* Refinamiento final sin violeta: oceano, turquesa y azul acero */
+.station:nth-of-type(4){border-color:#548C9D!important}
+.station:nth-of-type(4) .content{border-top:0!important}
+.station:nth-of-type(4) .content .kicker{color:#356E86!important}
+.skyroute a:nth-child(4){background:#E7EDEF!important;border:1px solid #B4C8CC!important}
+.skyroute a:nth-child(4),.skyroute a:nth-child(4) strong{color:#263F4C!important}
+.skyroute a:nth-child(4) span{color:#4D777A!important}
+.skyroute a:nth-child(4) small{color:#566873!important}
+.lab:nth-child(3n),.field-card:nth-child(3n){border-top-color:#548C9D!important}
+.routegrid a:nth-child(3){background:#DFE9E8!important;border:1px solid #BAD0CE!important}
+.routegrid a:nth-child(3) strong{color:#2D4D57!important}
+.routegrid a:nth-child(3) span{color:#4E6670!important}
+.map-site circle:first-child{fill:#087F9B!important}
+.map-site:focus circle:first-child,.map-site.selected circle:first-child{fill:#F09B53!important}
+.map-legend{color:#30566A!important}
+.map-sidebar .kicker,.map-sidebar output{color:#226E86!important}
+.map-controls button,.map-sidebar>button{background:#176B84!important;border-color:#176B84!important}
+.map-controls button[aria-pressed=false]{background:#FFF!important;color:#176B84!important}
+.lab a,.field-card a,.tracking-panel a,.map-sidebar a{color:#176B84!important}
+.field-card .interactive output,.tracking-panel output{color:#225E75!important}
+.visual.atmosphere.cloud-image-error{background:linear-gradient(135deg,#42BCEB,#0B76BC,#94DCE7)!important}
 </style></head><body>
 <section class="hero">
 <div class="top"><a class="logo" href="index.html">EXPLORANDUM</a><nav><a href="tierra-viva-expedicion-continua.html">Tierra</a><a href="cabina-once-preguntas.html">Océano</a><a href="aventura.html?abrir=mapa">Mapa</a></nav></div>
@@ -368,7 +389,7 @@ body{background:linear-gradient(180deg,#031324 0%,#073D55 50%,#031324 100%)!impo
 <rect width="650" height="760" fill="url(#seaFill)" rx="20"/>
 <path d="M500 0 L650 0 L650 760 L528 760 L505 672 L529 602 L492 548 L523 485 L478 429 L492 356 L454 303 L473 221 L445 135 Z" fill="#f5e0b4" opacity=".9"/>
 <path d="M220 4 C220 90 257 145 267 198 C282 255 280 305 303 357 C317 405 312 454 335 514 C364 586 415 654 466 715 L500 730 C465 669 433 598 405 532 C390 474 377 420 364 363 C340 293 330 234 300 182 C272 124 258 65 254 0Z" fill="url(#landfill)" stroke="#b97b5b" stroke-width="2"/>
-<path id="migrationPath" d="M243 40 Q235 122 274 201 T317 370 T355 531 T470 704" stroke="#ad3c91" stroke-width="5" stroke-dasharray="11 12" fill="none" opacity=".9" marker-end="url(#migrationArrow)"/>
+<path id="migrationPath" d="M243 40 Q235 122 274 201 T317 370 T355 531 T470 704" stroke="#168CA5" stroke-width="5" stroke-dasharray="11 12" fill="none" opacity=".9" marker-end="url(#migrationArrow)"/>
 <path id="migrationDots" d="M243 40 Q235 122 274 201 T317 370 T355 531 T470 704" stroke="#fff" stroke-width="1.4" stroke-dasharray="2 21" fill="none" opacity=".85"/>
 <g font-family="system-ui,sans-serif" font-weight="700" font-size="16" fill="#193647"><text x="20" y="70">OCÉANO PACÍFICO</text><text x="435" y="165" font-size="15">GOLFO DE</text><text x="435" y="187" font-size="15">CALIFORNIA</text><text x="35" y="735" font-size="12">ESQUEMA • NO A ESCALA</text></g>
 <g class="map-site" data-site="quintin" tabindex="0" role="button" aria-label="San Quintín" transform="translate(267 200)"><circle r="13"/><circle class="map-core" r="5"/><text x="-15" y="-22" text-anchor="end">San Quintín</text></g>
