@@ -33,13 +33,17 @@ jobs:
           await page.locator('#start').click();
           await page.waitForTimeout(6000);
           const initial=await page.locator('#depth').innerText();
+          const guide=await page.locator('#guideName').innerText();
+          if(!guide || guide.includes('Buscando'))throw new Error('La guía de descubrimientos no se inicializó');
           await page.keyboard.down('e');await page.waitForTimeout(800);await page.keyboard.up('e');
           const after=await page.locator('#depth').innerText();
+          await page.keyboard.down('w');await page.waitForTimeout(1000);await page.keyboard.up('w');
+          const speed=await page.locator('#speed').innerText();
           await page.locator('#book').click();
           const cards=await page.locator('.fieldCard').count();
           await page.locator('#bookClose').click();
           await page.locator('#sonar').click();
-          console.log(JSON.stringify({initial,after,cards,errors},null,2));
+          console.log(JSON.stringify({initial,after,guide,speed,cards,errors},null,2));
           await page.screenshot({path:'/tmp/explorandum-oceano3d.png',fullPage:false});
           await browser.close();
           if(cards<8)throw new Error('Faltan encuentros científicos en la guía');
