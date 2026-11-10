@@ -1,0 +1,26 @@
+name: Verificar enlaces publicos de EXPLORANDUM
+on:
+  push:
+    paths:
+      - '.github/workflows/verificar-enlaces-publicos.yml'
+  workflow_dispatch:
+jobs:
+  http-check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Comprobar respuestas HTTP reales desde internet
+        run: |
+          set -eu
+          base='https://prepdiplo-web.github.io/Explorandum'
+          for path in '/' '/inmersion-documental.html' '/oceano-inmersivo-3d.html'; do
+            echo "Verificando: ${base}${path}"
+            code=$(curl -L --retry 3 --retry-delay 3 --connect-timeout 15 -sS -o /tmp/explorandum-body -w '%{http_code}' "${base}${path}")
+            echo "HTTP ${code}; bytes=$(wc -c </tmp/explorandum-body)"
+            head -c 130 /tmp/explorandum-body || true
+            echo
+            if [ "${code}" != '200' ]; then
+              echo "::error::Fallo HTTP en ${path}: ${code}"
+              exit 1
+            fi
+          done
