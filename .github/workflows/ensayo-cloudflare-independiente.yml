@@ -1,0 +1,33 @@
+name: Explorandum - ensayo independencia sin despliegue
+on:
+  push:
+    branches:
+      - preparacion/cloudflare-independiente-2026-11
+    paths:
+      - 'infraestructura/comprobar_ensayo_cloudflare.py'
+      - 'infraestructura/ENSAYO-INDEPENDENCIA-CLOUDFLARE.md'
+      - '.github/workflows/ensayo-cloudflare-independiente.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ensayo-explorandum-cloudflare
+  cancel-in-progress: true
+jobs:
+  inventario:
+    name: Verificar copia potencial sin conectar Cloudflare
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - name: Recuperar únicamente contenido público del proyecto
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Comprobar sintaxis e inventario sin modificar archivos
+        run: |
+          python3 -m py_compile infraestructura/comprobar_ensayo_cloudflare.py
+          python3 infraestructura/comprobar_ensayo_cloudflare.py
+      - name: Confirmar que NO se ha desplegado
+        run: |
+          test "${{ github.ref }}" = 'refs/heads/preparacion/cloudflare-independiente-2026-11'
+          echo 'ENSAYO LOCAL: sin credenciales, sin Cloudflare y sin despliegue'
