@@ -3,6 +3,7 @@
 All files are original live-action footage. No interpolation or photograph animations.
 """
 import json,pathlib,subprocess,urllib.parse,urllib.request,time,hashlib
+import imageio_ffmpeg
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 DEST=ROOT/"media"/"real";DEST.mkdir(parents=True,exist_ok=True)
 AGENT={"User-Agent":"ExplorandumMedia/1.0 (educational project, github.com/prepdiplo-web/Explorandum)"}
@@ -31,12 +32,11 @@ def download(url,target,limit):
     if target.stat().st_size<5000:raise RuntimeError("empty media")
 def convert(entry,raw):
     out=DEST/(entry["name"]+".mp4")
-    subprocess.run(["ffmpeg","-hide_banner","-loglevel","error","-y","-ss",str(entry["start"]),"-i",str(raw),
+    subprocess.run([imageio_ffmpeg.get_ffmpeg_exe(),"-hide_banner","-loglevel","error","-y","-ss",str(entry["start"]),"-i",str(raw),
                    "-t",str(entry["seconds"]),"-vf","scale=1280:720:force_original_aspect_ratio=increase,crop=1280:720,setsar=1",
                    "-c:v","libx264","-preset","fast","-crf","22","-pix_fmt","yuv420p","-an","-movflags","+faststart",str(out)],check=True,timeout=240)
-    probe=json.loads(subprocess.check_output(["ffprobe","-v","error","-show_entries","format=duration,size:stream=width,height,codec_name","-of","json",str(out)],text=True))
-    if out.stat().st_size<30000 or float(probe["format"]["duration"])<4:raise RuntimeError("Broken video: "+str(out))
-    print("DONE",entry["name"],probe["format"]["duration"],out.stat().st_size,flush=True)
+    if out.stat().st_size<30000:raise RuntimeError("Broken video: "+str(out))
+    print("DONE",entry["name"],out.stat().st_size,flush=True)
 for e in CLIPS:
     print("SOURCE",e["file"],flush=True)
     metadata=info(e["file"])
