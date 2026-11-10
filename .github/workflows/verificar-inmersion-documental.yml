@@ -1,0 +1,58 @@
+name: EXPLORANDUM - prueba documental real
+on:
+  push:
+    paths:
+      - 'inmersion-documental.html'
+      - 'capas.html'
+      - '.github/workflows/verificar-inmersion-documental.yml'
+  workflow_dispatch:
+jobs:
+  browser:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Preparar navegador
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Comprobar documental y navegacion
+        run: |
+          python3 -m http.server 8765 >/tmp/explorandum-doc-http.log 2>&1 &
+          node --input-type=module <<'NODE'
+          import { chromium } from 'playwright';
+          const browser=await chromium.launch({headless:true});
+          const page=await browser.newPage({viewport:{width:1440,height:900}});
+          const errors=[];
+          page.on('pageerror',e=>errors.push(e.message));
+          await page.goto('http://127.0.0.1:8765/inmersion-documental.html',{waitUntil:'domcontentloaded'});
+          await page.waitForTimeout(1200);
+          const start=await page.locator('#title').innerText();
+          const n=await page.locator('.tile').count();
+          if(n!==10)throw Error('Se esperaban 10 fichas, hay '+n);
+          if(!await page.locator('#heroFilm').count())throw Error('No existe video panoramico');
+          await page.locator('#next').click();
+          const next=await page.locator('#title').innerText();
+          if(start===next)throw Error('El avance entre encuentros no funciona');
+          await page.locator('#previous').click();
+          if(await page.locator('#title').innerText()!==start)throw Error('El retroceso no funciona');
+          await page.locator('#toggleMotion').click();
+          await page.locator('#toggleMotion').click();
+          await page.locator('#toggleSound').click();
+          await page.screenshot({path:'/tmp/explorandum-documental.png',fullPage:false});
+          await page.goto('http://127.0.0.1:8765/capas.html');
+          if(!await page.locator('#sea-link').getAttribute('href').then(x=>x?.startsWith('inmersion-documental.html')))throw Error('La capa oceano no apunta al documental');
+          if(errors.length)throw Error('Errores JavaScript: '+errors.join(' | '));
+          console.log('PASS: 10 especies, controles, navegacion, video presente, capa documental activa; inicial='+start);
+          await browser.close();
+          NODE
+      - name: Guardar captura de comprobacion
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: explorandum-documental-prueba
+          path: /tmp/explorandum-documental.png
+          if-no-files-found: ignore
