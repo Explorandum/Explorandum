@@ -1,0 +1,33 @@
+name: EXPLORANDUM - escenas de anemona y pinnipedo
+on:
+  push:
+    paths:
+      - 'tools/curar_anemona_pinnipedo.py'
+      - '.github/workflows/curar-anemona-pinnipedo.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  video:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - name: Instalar conversor
+        run: python3 -m pip install --break-system-packages -q imageio-ffmpeg
+      - name: Generar dos fragmentos reales de naturaleza
+        run: python3 tools/curar_anemona_pinnipedo.py
+      - name: Guardar clips comprobados
+        run: |
+          set -euo pipefail
+          for f in media/real/anemona-viva.mp4 media/real/pinnipedo-bajo-agua.mp4; do
+            test -s "$f"
+            test "$(stat -c%s "$f")" -gt 200000
+          done
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add media/real/anemona-viva.mp4 media/real/pinnipedo-bajo-agua.mp4
+          git commit -m "Guardar grabaciones originales de anémona y pinnípedo para selección"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
