@@ -1,0 +1,32 @@
+name: EXPLORANDUM - medusa sin cartela
+on:
+  push:
+    paths:
+      - 'tools/cortar_cartela_medusa.py'
+      - '.github/workflows/cortar-cartela-medusa.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  video:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Preparar codificador de vídeo
+        run: python3 -m pip install --break-system-packages -q imageio-ffmpeg
+      - name: Cortar cabecera y conservar imágenes originales
+        run: python3 tools/cortar_cartela_medusa.py
+      - name: Verificar clip y publicar
+        run: |
+          set -euo pipefail
+          test -s media/real/medusa-sin-cartela.mp4
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add media/real/medusa-sin-cartela.mp4
+          git commit -m "Publicar medusa profunda sin cartela inicial"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
