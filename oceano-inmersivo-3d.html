@@ -294,7 +294,7 @@ function updateGuide(){
  $('guideName').textContent=near.name;
  const targetAngle=Math.atan2(near.wx-player.x,-(near.wz-player.z));
  const turn=Math.atan2(Math.sin(targetAngle-player.yaw),Math.cos(targetAngle-player.yaw));
- const direction=Math.abs(turn)<.27?'De frente':turn>0?'Gira a la izquierda':'Gira a la derecha';
+ const direction=Math.abs(turn)<.27?'De frente':turn>0?'Gira a la derecha':'Gira a la izquierda';
  $('guideDistance').textContent=Math.round(dist)+' m · '+direction;
 }
 function map(){const c=$('miniMap'),ctx=c.getContext('2d'),w=160,h=170;ctx.clearRect(0,0,w,h);ctx.fillStyle='#062537';ctx.fillRect(0,0,w,h);
