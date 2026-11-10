@@ -1,0 +1,65 @@
+name: EXPLORANDUM - verificar expedicion terrestre continua
+on:
+  push:
+    paths:
+      - 'tierra-viva-expedicion-continua.html'
+      - '.github/workflows/verificar-tierra-continua.yml'
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verificar foto, geologia, bosque y cuaderno
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('tierra-viva-expedicion-continua.html').read_text()
+          a=Path('media/terrestre/valle-cirios-portada.jpg')
+          assert a.exists() and a.stat().st_size>50000
+          assert 'media/terrestre/valle-cirios-portada.jpg' in s
+          assert s.count('role="tabpanel"')==5-1 or s.count('role="tabpanel"')==5
+          assert 'media/terrestre/golfo-nasa-satelite.jpg' in s
+          assert 'media/terrestre/sierra-la-laguna-pinos.jpg' in s
+          assert 'id="landQuestion"' in s
+          assert '<a href="cabina-once-preguntas.html">Ver cómo será' not in s
+          print('PASS: portada desierto, estaciones visibles, pregunta terrestre')
+          PY
+      - name: Inspeccionar móvil y ordenador con Chromium
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+          python3 -m http.server 8765 >/tmp/tierra.log 2>&1 &
+          node --input-type=module <<'NODE'
+          import {chromium} from 'playwright';
+          const browser=await chromium.launch({headless:true});
+          for(const viewport of [{width:1440,height:900},{width:390,height:844}]){
+            const page=await browser.newPage({viewport});
+            const errors=[];page.on('pageerror',e=>errors.push(e.message));
+            await page.goto('http://127.0.0.1:8765/tierra-viva-expedicion-continua.html',{waitUntil:'domcontentloaded'});
+            const images=await page.evaluate(async()=>{
+              const paths=['media/terrestre/valle-cirios-portada.jpg','media/terrestre/golfo-nasa-satelite.jpg','media/terrestre/sierra-la-laguna-pinos.jpg'];
+              return Promise.all(paths.map(async src=>{const img=new Image();img.src=src;await img.decode();return [src,img.naturalWidth,img.naturalHeight]}));
+            });
+            if(images.some(r=>r[1]<400||r[2]<350))throw Error('Foto defectuosa');
+            const sections=page.locator('section[role="tabpanel"]');
+            if(await sections.count()!==4)throw Error('No hay cuatro estaciones');
+            for(let i=0;i<4;i++)if(!await page.locator('#panel-'+i).isVisible())throw Error('Estacion oculta '+i);
+            await page.locator('#tab-3').click();
+            const sel=await page.locator('#tab-3').getAttribute('aria-selected');
+            if(sel!=='true')throw Error('Navegador de estacion no funciona');
+            const question=page.locator('#landQuestion');
+            await question.fill('¿Por qué la sierra tiene bosque?');
+            if(await page.locator('#landQuestionForm button[type="submit"]').isEnabled())throw Error('La IA finge funcionar');
+            const section=page.locator('#cuaderno');
+            if(!await section.isVisible())throw Error('Cuaderno propio ausente');
+            if(errors.length)throw Error(errors.join(' | '));
+            console.log('PASS '+viewport.width+'; fotos='+JSON.stringify(images));
+            await page.close();
+          }
+          await browser.close();
+          NODE
