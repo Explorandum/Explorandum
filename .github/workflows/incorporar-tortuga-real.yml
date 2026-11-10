@@ -1,0 +1,35 @@
+name: EXPLORANDUM - incorporar tortuga submarina real
+on:
+  push:
+    paths:
+      - 'tools/agregar_tortuga_real.py'
+      - '.github/workflows/incorporar-tortuga-real.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  prepare:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Instalar FFmpeg
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+      - name: Crear clip submarino
+        run: python3 tools/agregar_tortuga_real.py
+      - name: Validar y guardar el nuevo vídeo sin tocar el material existente
+        run: |
+          set -euo pipefail
+          test -s media/real/tortuga-marina.mp4
+          ffprobe -v error -select_streams v:0 -show_entries stream=codec_name,width,height -of csv=p=0 media/real/tortuga-marina.mp4 | grep -Fx 'h264,1280,720'
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add media/real/tortuga-marina.mp4
+          git commit -m "Añadir tortuga marina submarina real al archivo documental"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
