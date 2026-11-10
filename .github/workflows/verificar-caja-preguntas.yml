@@ -1,0 +1,59 @@
+name: EXPLORANDUM - verificar caja de preguntas
+on:
+  push:
+    paths:
+      - 'cabina-once-preguntas.html'
+      - '.github/workflows/verificar-caja-preguntas.yml'
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validar página y vídeos
+        run: |
+          python3 - <<'PY'
+          import re,json,pathlib
+          s=pathlib.Path('cabina-once-preguntas.html').read_text()
+          assert 'id="questionPanel"' in s and 'id="questionInput"' in s
+          assert 'id="askSubmit"' in s and 'disabled' in s
+          a=json.loads(re.search(r'const species=(\[[\s\S]*?\]);\nconst ',s).group(1))
+          assert len(a)==11
+          assert a[6]['video']=='media/real/medusa-sin-cartela.mp4',a[6]['video']
+          for x in a:assert pathlib.Path(x['video']).is_file(),x['video']
+          print('PASS: 11 videos, medusa recortada, caja visible con conexión pendiente')
+          PY
+      - name: Probar interacción en navegador
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+          python3 -m http.server 8765 >/tmp/explorandum.log 2>&1 &
+          node --input-type=module <<'NODE'
+          import {chromium} from 'playwright';
+          const b=await chromium.launch({headless:true});
+          for(const viewport of [{width:1440,height:900},{width:390,height:844}]){
+            const p=await b.newPage({viewport});
+            const errs=[];p.on('pageerror',e=>errs.push(e.message));
+            await p.goto('http://127.0.0.1:8765/cabina-once-preguntas.html',{waitUntil:'domcontentloaded'});
+            await p.locator('#begin').click();
+            await p.locator('#ask').click();
+            if(!await p.locator('#questionPanel').isVisible())throw Error('No aparece la caja');
+            const species=await p.locator('#askSpecies').innerText();
+            if(!species.includes('Tiburón ballena'))throw Error('La pregunta no conoce el encuentro');
+            await p.locator('#askExample2').click();
+            if(await p.locator('#questionInput').inputValue()!=='¿Qué come?')throw Error('Ejemplo no insertado');
+            if(await p.locator('#askSubmit').isEnabled())throw Error('Botón de IA aparenta estar conectado');
+            await p.locator('#closeAsk').click();
+            await p.locator('#next').click();
+            await p.locator('#ask').click();
+            if(!(await p.locator('#askSpecies').innerText()).includes('Tiburón zorro'))throw Error('Contexto no actualizado');
+            if(errs.length)throw Error(errs.join(' | '));
+            await p.close();
+          }
+          await b.close();
+          console.log('PASS: móvil y escritorio, contexto y estado IA transparente');
+          NODE
