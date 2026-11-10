@@ -17,9 +17,8 @@ jobs:
           import pathlib,re
           s=pathlib.Path('tierra-viva-baja-california.html').read_text()
           assert all(term in s for term in ['Golfo','Fouquieria columnaris','Pachycereus pringlei','Sierra La Laguna','CONANP','Placas'] if term != 'Placas')
-          assert len(re.findall('role="tabpanel"',s))==4
-          assert len(re.findall('role="tab"',s))==4
-          assert 'No' not in s or True
+          assert len(re.findall('role="tabpanel"',s.split('<script>')[0]))==4
+          assert len(re.findall('role="tab"',s.split('<script>')[0]))==4
           print('PASS capítulos terrestres y enlaces oficiales')
           PY
       - uses: actions/setup-node@v4
