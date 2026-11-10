@@ -254,7 +254,7 @@ function createCorals(){
   new THREE.IcosahedronGeometry(1,2),
   new THREE.MeshStandardMaterial({color:0xbba795,roughness:.97}),
   210);
- const d=new THREE.Object3D();let n=0;
+ const d=new THREE.Object3D();let n=0,moundCount=0;
  const patches=[[-30,74,22],[27,65,20],[-30,-78,27],[16,-105,16]];
  for(let colony=0;colony<185;colony++){
   const p=patches[Math.floor(rand()*patches.length)],a=rand()*Math.PI*2,r=Math.sqrt(rand())*p[2];
@@ -262,8 +262,8 @@ function createCorals(){
   const species=rand();
   if(species<.25){
    d.position.set(x,y+.22*h,z);d.scale.set(h*(.7+rand()*.5),h*.5,h*(.75+rand()*.5));
-   d.rotation.set(rand(),rand()*6.28,rand());d.updateMatrix();mounds.setMatrixAt(colony,d.matrix);
-   mounds.setColorAt(colony,new THREE.Color().setHSL(.06+rand()*.07,.12+rand()*.1,.42+rand()*.18));
+   d.rotation.set(rand(),rand()*6.28,rand());d.updateMatrix();mounds.setMatrixAt(moundCount,d.matrix);
+   mounds.setColorAt(moundCount,new THREE.Color().setHSL(.06+rand()*.07,.12+rand()*.1,.42+rand()*.18));moundCount++;
   } else {
    // Several tapered stems per colony, each leaning away from the center.
    for(let j=0;j<12&&n<2600;j++){
@@ -278,7 +278,7 @@ function createCorals(){
   }
  }
  branches.count=n;branches.instanceMatrix.needsUpdate=true;
- mounds.instanceMatrix.needsUpdate=true;scene.add(branches,mounds);
+ mounds.count=moundCount;mounds.instanceMatrix.needsUpdate=true;scene.add(branches,mounds);
 }
 let bladeGeo,bladeMat,bladeMeshes=[];
 function createPlants(){
