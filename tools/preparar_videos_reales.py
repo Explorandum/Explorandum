@@ -13,7 +13,7 @@ SOURCES=[
  {"name":"tiburon-ballena","file":"Swimming with a whale shark (Rhincodon typus) (no audio).webm","seconds":24,"start":20,"max_source_mb":95},
  {"name":"lobo-marino","file":"Sea lions at Pier 39 video.webm","seconds":17,"start":0,"max_source_mb":20},
  {"name":"ballena-jorobada","file":"WhalesKGS.webm","seconds":7,"start":0,"max_source_mb":5},
- {"name":"arrecife-real","file":"Unterwasserwelt, Korallenriff im Roten Meer DSCF1654.webm","seconds":24,"start":16,"max_source_mb":95},
+ {"name":"arrecife-real","file":"Tropical Fish Banner Fish on Coral Reef.webm","seconds":12,"start":0,"max_source_mb":15},
 ]
 def media_info(file):
     title="File:"+file
