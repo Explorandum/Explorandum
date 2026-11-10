@@ -29,6 +29,7 @@ jobs:
           assert 'media/terrestre/golfo-nasa-satelite.jpg' not in s
           assert 'GOES-18+GEOcolor' in s
           assert 'Misión 07' in s
+          assert all(x in s for x in ['birdEvidence','wetlandChoice','weatherEvidence','saveFieldNotes','copyFieldNotes'])
           assert 'science.nasa.gov' in s and 'id="skyQuestion"' in s
           print('PASS: cuatro estaciones, aves distintas, NASA unica, cuaderno propio')
           PY
@@ -52,6 +53,13 @@ jobs:
             if(!(await p.locator('#seaTempValue').innerText()).includes('28'))throw Error('Climate slider failed');
             await p.locator('[data-view="polar"]').click();
             if(!(await p.locator('#satExplanation').innerText()).includes('órbita baja'))throw Error('Satellite comparison failed');
+            await p.locator('[data-bird="frigate"]').click();
+            if(!(await p.locator('#birdIDResult').innerText()).includes('fragata'))throw Error('Bird identification failed');
+            await p.locator('#wetlandChoice').selectOption('lapaz');
+            if(!(await p.locator('#wetlandFact').innerText()).includes('Estuario'))throw Error('Wetland comparison failed');
+            await p.locator('#weatherEvidence').fill('Observo nubes sobre el Pacífico');
+            await p.locator('#saveFieldNotes').click();
+            if(!(await p.locator('#fieldSaveResult').innerText()).includes('guardadas'))throw Error('Field notebook save failed');
             await p.locator('#lightyears').fill('250');
             if(!(await p.locator('#lyResult').innerText()).includes('250 años'))throw Error('Light travel activity failed');
             await p.locator('[data-activity="migration"][data-answer="yes"]').click();
