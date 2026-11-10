@@ -1,0 +1,55 @@
+name: EXPLORANDUM - verificar cabina dos mares
+on:
+  push:
+    paths:
+      - 'cabina-dos-mares.html'
+      - '.github/workflows/verificar-cabina-dos-mares.yml'
+  workflow_dispatch:
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Comprobar datos geográficos y fuente de cada encuentro
+        run: |
+          python3 - <<'PY'
+          import json,re,pathlib
+          s=pathlib.Path('cabina-dos-mares.html').read_text()
+          a=json.loads(re.search(r'const species=(\[[\s\S]*?\]);\nconst ',s).group(1))
+          assert len(a)==8
+          for item in a:
+            for k in ('scope','geo','status','source','video','videoPage'):
+              assert item.get(k), (item['name'],k)
+            assert pathlib.Path(item['video']).is_file(),item['video']
+          assert 'Península de Baja California' in s
+          assert 'id="geoSource"' in s
+          print('PASS: ocho fichas científicas y ocho vídeos reales')
+          PY
+      - name: Probar navegación y fichas en navegador
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+          python3 -m http.server 8765 >/tmp/site.log 2>&1 &
+          node --input-type=module <<'NODE'
+          import {chromium} from 'playwright';
+          const browser=await chromium.launch({headless:true});
+          const page=await browser.newPage();
+          const errors=[];page.on('pageerror',e=>errors.push(e.message));
+          await page.goto('http://127.0.0.1:8765/cabina-dos-mares.html',{waitUntil:'domcontentloaded'});
+          await page.locator('#begin').click();
+          const first=await page.locator('#name').innerText();
+          await page.locator('#inspect').click();
+          if(!await page.locator('#geoText').isVisible())throw Error('No aparece el detalle geográfico');
+          const href=await page.locator('#geoSource').getAttribute('href');
+          if(!href?.startsWith('https://'))throw Error('No existe fuente científica');
+          await page.locator('#close').click();
+          for(let i=0;i<8;i++)await page.locator('#next').click();
+          if((await page.locator('#name').innerText())!==first)throw Error('La navegación no regresa al inicio');
+          if(errors.length)throw Error(errors.join(' | '));
+          console.log('PASS: navegación y ficha geográfica comprobadas');
+          await browser.close();
+          NODE
